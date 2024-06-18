@@ -1,47 +1,74 @@
 class RecipesController < ApplicationController
+  before_action :require_login, except: [:index, :show]
+  before_action :set_recipe, only: [:show, :edit, :update, :destroy]
+
+  # GET /recipes
   def index
-    @recipes = Recipe.all
+     if logged_in?
+      @recipes = current_user.recipes
+    end
   end
 
+  # GET /recipes/1
   def show
-    @recipe = Recipe.find(params[:id])
+    # @recipe is set in set_recipe before_action
   end
 
+  # GET /recipes/new
   def new
-    @recipe = Recipe.new
+    @recipe = current_user.recipes.build
   end
 
-  def create
-    @recipe = Recipe.new(recipe_params)
-    if @recipe.save
-      redirect_to @recipe
-    else
-      render 'new'
-    end
-  end
-
+  # GET /recipes/1/edit
   def edit
-    @recipe = Recipe.find(params[:id])
+    # @recipe is set in set_recipe before_action
   end
 
-  def update
-    @recipe = Recipe.find(params[:id])
-    if @recipe.update(recipe_params)
-      redirect_to @recipe
+  # POST /recipes
+  def create
+    @recipe = current_user.recipes.build(recipe_params)
+
+    if @recipe.save
+      redirect_to @recipe, notice: 'Recipe was successfully created.'
     else
-      render 'edit'
+      render :new
     end
   end
 
+  # PATCH/PUT /recipes/1
+  def update
+    # @recipe is set in set_recipe before_action
+
+    if @recipe.update(recipe_params)
+      redirect_to @recipe, notice: 'Recipe was successfully updated.'
+    else
+      render :edit
+    end
+  end
+
+  # DELETE /recipes/1
   def destroy
-    @recipe = Recipe.find(params[:id])
+    # @recipe is set in set_recipe before_action
     @recipe.destroy
-    redirect_to recipes_path
+    redirect_to recipes_url, notice: 'Recipe was successfully destroyed.'
   end
 
   private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_recipe
+      @recipe = current_user.recipes.find(params[:id])
+    end
 
-  def recipe_params
-    params.require(:recipe).permit(:name, :ingredients, :directions)
-  end
+    # Only allow a list of trusted parameters through.
+    def recipe_params
+      params.require(:recipe).permit(:name, :ingredients, :directions, :image)
+    end
+
+    # Ensure user is logged in before accessing recipes
+    def require_login
+      unless logged_in?
+        redirect_to login_path, alert: "Please log in to view your recipes."
+      end
+    end
 end
+

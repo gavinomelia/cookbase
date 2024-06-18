@@ -1,3 +1,4 @@
+ <% if logged_in? %>
 <h1>Recipes</h1>
 <%= link_to 'New Recipe', new_recipe_path %>
 <ul>
@@ -5,5 +6,11 @@
     <li>
       <%= link_to recipe.name, recipe %>
     </li>
+    </ul>
   <% end %>
-</ul
+
+<% else %>
+        <h2>Create an account or login to create or view recipes</h2>
+ <% end %>
+
+

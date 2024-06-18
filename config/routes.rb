@@ -1,14 +1,16 @@
 Rails.application.routes.draw do
- resources :recipes
-  get 'recipes/index'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # User registration routes
+  resources :users, only: [:new, :create]
+  
+  # Session routes for login/logout
+  get '/login', to: 'sessions#new', as: :login
+  post '/login', to: 'sessions#create'
+  get '/logout', to: 'sessions#destroy', as: :logout
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Recipe routes
+  resources :recipes
 
-  # Defines the root path route ("/")
-  # root "posts#index"
-  root 'recipes#index'
-  get 'new' => 'recipes#new'
+  # Root route
+  root "recipes#index"
 end
+
