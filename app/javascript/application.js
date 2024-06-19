@@ -1,12 +1,5 @@
-// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
-// Import Turbo and start it
-import { Application } from "stimulus"
+import 'bootstrap';
 import { Turbo } from "@hotwired/turbo-rails"
-
-import "bootstrap"
-
-const application = Application.start()
-const turbo = Turbo()
 
 document.addEventListener("turbo:load", function() {
   console.log("Turbo loaded");
@@ -27,11 +20,16 @@ document.addEventListener("turbo:load", function() {
     template = template.replace(/NEW_RECORD/g, time);
     document.querySelector('#ingredients').insertAdjacentHTML('beforeend', template);
 
-    // Add event listener to the new remove link
     let newField = document.querySelector('#ingredients').lastElementChild;
     newField.querySelector('.remove_ingredient').addEventListener('click', removeFields);
     console.log("New field added");
   }
+
+  document.querySelector('#ingredients').addEventListener('click', function(event) {
+    if (event.target.classList.contains('remove_ingredient')) {
+      removeFields(event);
+    }
+  });
 
   document.querySelectorAll('.remove_ingredient').forEach(link => {
     link.addEventListener('click', removeFields);
