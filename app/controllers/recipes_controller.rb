@@ -9,25 +9,21 @@ class RecipesController < ApplicationController
     end
   end
 
-  # GET /recipes/1
   def show
     # @recipe is set in set_recipe before_action
   end
 
-  # GET /recipes/new
   def new
-    @recipe = current_user.recipes.build
+    @recipe = Recipe.new
+    @recipe.ingredients.build
   end
 
-  # GET /recipes/1/edit
   def edit
-    # @recipe is set in set_recipe before_action
+    @recipe.ingredients.build if @recipe.ingredients.empty?
   end
 
-  # POST /recipes
   def create
-    @recipe = current_user.recipes.build(recipe_params)
-
+    @recipe = Recipe.new(recipe_params)
     if @recipe.save
       redirect_to @recipe, notice: 'Recipe was successfully created.'
     else
@@ -35,7 +31,6 @@ class RecipesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /recipes/1
   def update
     # @recipe is set in set_recipe before_action
 
@@ -56,12 +51,12 @@ class RecipesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_recipe
-      @recipe = current_user.recipes.find(params[:id])
+      @recipe = Recipe.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def recipe_params
-      params.require(:recipe).permit(:name, :ingredients, :directions, :image)
+      params.require(:recipe).permit(:name, :directions, ingredients_attributes: [:id, :name, :_destroy])
     end
 
     # Ensure user is logged in before accessing recipes
