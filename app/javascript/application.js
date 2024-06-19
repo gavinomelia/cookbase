@@ -1,7 +1,12 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 // Import Turbo and start it
+import { Application } from "stimulus"
 import { Turbo } from "@hotwired/turbo-rails"
-Turbo.start()
+
+import "bootstrap"
+
+const application = Application.start()
+const turbo = Turbo()
 
 document.addEventListener("turbo:load", function() {
   console.log("Turbo loaded");
