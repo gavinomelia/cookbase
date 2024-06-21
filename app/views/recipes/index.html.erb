@@ -1,16 +1,22 @@
- <% if logged_in? %>
-<h1>Recipes</h1>
-<%= link_to 'New Recipe', new_recipe_path %>
-<ul>
-  <% @recipes.each do |recipe| %>
-    <li>
-      <%= link_to recipe.name, recipe %>
-    </li>
-    </ul>
-  <% end %>
-
-<% else %>
-        <h2>Create an account or login to create or view recipes</h2>
- <% end %>
-
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8">
+      <h2>My Recipes</h2>
+      <ul class="list-group">
+      <% if @recipes.any? %>
+        <% @recipes.each do |recipe| %>
+          <li class="list-group-item">
+            <%= link_to recipe.name, recipe_path(recipe) %>
+          </li>
+        <% end %>
+      <% else %>
+        <li class="list-group-item">Add a new recipe to get started.</li>
+      <% end %>      
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <!-- Optional: Add a sidebar with additional information or actions -->
+    </div>
+  </div>
+</div>
 

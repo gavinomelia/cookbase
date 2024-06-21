@@ -4,6 +4,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
+    @recipes = []
      if logged_in?
       @recipes = current_user.recipes
     end
