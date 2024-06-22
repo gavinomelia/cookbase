@@ -3,7 +3,7 @@
     <div class="col-md-8">
       <h2>My Recipes</h2>
       <ul class="list-group">
-      <% if @recipes.any? %>
+      <% if logged_in?%>
         <% @recipes.each do |recipe| %>
           <li class="list-group-item">
             <%= link_to recipe.name, recipe_path(recipe) %>

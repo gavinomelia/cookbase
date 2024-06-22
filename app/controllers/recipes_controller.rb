@@ -4,31 +4,30 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
-    @recipes = []
+   # @recipes = []
      if logged_in?
       @recipes = current_user.recipes
     end
   end
 
   def show
-    # @recipe is set in set_recipe before_action
   end
 
   def new
-    @recipe = Recipe.new
-    @recipe.ingredients.build
+    @recipe = current_user.recipes.build
   end
 
   def edit
-    @recipe.ingredients.build if @recipe.ingredients.empty?
+   # @recipe.ingredients.build if @recipe.ingredients.empty?
   end
 
   def create
-    @recipe = Recipe.new(recipe_params)
-    if @recipe.save
+   @recipe = current_user.recipes.build(recipe_params)
+
+   if @recipe.save
       redirect_to @recipe, notice: 'Recipe was successfully created.'
     else
-      render :new
+       render :new
     end
   end
 
@@ -42,7 +41,6 @@ class RecipesController < ApplicationController
     end
   end
 
-  # DELETE /recipes/1
   def destroy
     # @recipe is set in set_recipe before_action
     @recipe.destroy

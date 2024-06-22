@@ -1,49 +1,40 @@
-<%= form_with(model: @recipe, local: true) do |form| %>
-  <% if @recipe.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
-      <ul>
-        <% @recipe.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+<!-- app/views/recipes/_form.html.erb -->
+<div class="container mt-4">
+  <%= form_with(model: recipe) do |form| %>
+    <div class="mb-3">
+      <%= form.label :name, class: "form-label" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :directions, "Directions", class: "form-label" %>
+      <%= form.text_area :directions, class: "form-control", required: true %>
+    </div>
+
+    <h3>Ingredients</h3>
+    <div id="ingredients">
+      <%= form.fields_for :ingredients do |f| %>
+        <div class="ingredient-fields mb-3">
+          <%= f.text_field :name, class: "form-control", placeholder: "Ingredient", required: true %>
+          <%= link_to "Remove", '#', class: "remove_ingredient ms-2 btn btn-outline-danger btn-sm" %>
+          <%= f.hidden_field :_destroy %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "btn btn-primary mt-3" %>
+
+    <div class="d-grid mt-4">
+      <%= form.submit "Save Recipe", class: "btn btn-success btn-lg" %>
     </div>
   <% end %>
+</div>
 
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div>
-    <%= form.label :directions %>
-    <%= form.text_area :directions %>
-  </div>
-
-  <h3>Ingredients</h3>
-  <div id="ingredients">
-    <%= form.fields_for :ingredients do |ingredient_form| %>
-      <div class="ingredient-fields">
-        <%= ingredient_form.label :name, "Ingredient" %>
-        <%= ingredient_form.text_field :name %>
-        <%= link_to "Remove", '#', class: "remove_ingredient" %>
-      </div>
-    <% end %>
-  </div>
-  <%= link_to "Add Ingredient", '#', id: "add_ingredient" %>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
-
-<!-- Hidden template for adding new ingredients dynamically -->
+<!-- Ingredient Template (Hidden) -->
 <template id="ingredient_template">
-  <div class="ingredient-fields">
-    <label for="recipe_ingredients_attributes_NEW_RECORD_name">Ingredient</label>
-    <input type="text" name="recipe[ingredients_attributes][NEW_RECORD][name]" id="recipe_ingredients_attributes_NEW_RECORD_name">
-    <a href="#" class="remove_ingredient">Remove</a>
-    <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" id="recipe_ingredients_attributes_NEW_RECORD__destroy">
+  <div class="ingredient-fields mb-3">
+    <input type="text" name="recipe[ingredients_attributes][NEW_RECORD][name]" class="form-control" placeholder="Ingredient">
+    <a href="#" class="remove_ingredient ms-2 btn btn-outline-danger btn-sm">Remove</a>
+    <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
   </div>
 </template>
-
