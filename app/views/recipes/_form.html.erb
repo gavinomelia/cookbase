@@ -1,40 +1,40 @@
-<!-- app/views/recipes/_form.html.erb -->
 <div class="container mt-4">
   <%= form_with(model: recipe) do |form| %>
-    <div class="mb-3">
-      <%= form.label :name, class: "form-label" %>
-      <%= form.text_field :name, class: "form-control", required: true %>
+    <div class="mb-4">
+      <%= form.label :name, class: "block text-gray-700 text-sm font-bold mb-2" %>
+      <%= form.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
     </div>
 
-    <div class="mb-3">
-      <%= form.label :directions, "Directions", class: "form-label" %>
-      <%= form.text_area :directions, class: "form-control", required: true %>
+    <div class="mb-4">
+      <%= form.label :directions, "Directions", class: "block text-gray-700 text-sm font-bold mb-2" %>
+      <%= form.text_area :directions, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", required: true %>
     </div>
 
-    <h3>Ingredients</h3>
-    <div id="ingredients">
+    <h3 class="text-lg font-bold mb-2">Ingredients</h3>
+    <div id="ingredients" class="space-y-4">
       <%= form.fields_for :ingredients do |f| %>
-        <div class="ingredient-fields mb-3">
-          <%= f.text_field :name, class: "form-control", placeholder: "Ingredient", required: true %>
-          <%= link_to "Remove", '#', class: "remove_ingredient ms-2 btn btn-outline-danger btn-sm" %>
+        <div class="ingredient-fields flex items-center space-x-2">
+          <%= f.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "Ingredient" %>
+          <%= link_to "Remove", '#', class: "remove_ingredient text-red-500 hover:text-red-700" %>
           <%= f.hidden_field :_destroy %>
         </div>
       <% end %>
     </div>
 
-    <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "btn btn-primary mt-3" %>
+    <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3" %>
 
-    <div class="d-grid mt-4">
-      <%= form.submit "Save Recipe", class: "btn btn-success btn-lg" %>
+    <div class="mt-4">
+      <%= form.submit "Save Recipe", class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
     </div>
   <% end %>
 </div>
 
 <!-- Ingredient Template (Hidden) -->
 <template id="ingredient_template">
-  <div class="ingredient-fields mb-3">
-    <input type="text" name="recipe[ingredients_attributes][NEW_RECORD][name]" class="form-control" placeholder="Ingredient">
-    <a href="#" class="remove_ingredient ms-2 btn btn-outline-danger btn-sm">Remove</a>
+  <div class="ingredient-fields flex items-center space-x-2">
+    <input type="text" name="recipe[ingredients_attributes][NEW_RECORD][name]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Ingredient">
+    <a href="#" class="remove_ingredient text-red-500 hover:text-red-700">Remove</a>
     <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
   </div>
 </template>
+

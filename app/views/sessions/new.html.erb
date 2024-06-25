@@ -1,28 +1,42 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h2 class="text-center">Login</h2>
-        </div>
-        <div class="card-body">
-          <%= form_with(url: login_path, local: true) do |form| %>
-            <div class="mb-3">
-              <%= form.label :email, class: "form-label" %>
-              <%= form.email_field :email, class: "form-control" %>
+<head>
+    <title>Login</title>
+</head>
+<body class="bg-gray-100">
+    <div class="flex justify-center items-center f-screen">
+        <div class="w-full max-w-md flex flex-col items-center bg-white p-8 rounded shadow-lg">
+            <!-- Text Login -->
+            <h1 class="text-center text-2xl font-bold text-gray-600 mb-6">LOGIN</h1>
+            <%= form_with(url: login_path, local: true) do |form| %>
+            <!-- Email Input -->
+            <div class="w-full mb-6">
+             <%= form.label :email, class: "form-label" %>
+             <%= form.email_field :email, class: "w-full py-4 px-8 bg-slate-200 placeholder:font-semibold rounded hover:ring-1 outline-blue-500", placeholder: "Email" %>
             </div>
-            <div class="mb-3">
+            <!-- Password Input -->
+            <div class="w-full mb-6">
               <%= form.label :password, class: "form-label" %>
-              <%= form.password_field :password, class: "form-control" %>
+              <%= form.password_field :password, class: "w-full py-4 px-8 bg-slate-200 placeholder:font-semibold rounded hover:ring-1 outline-blue-500", placeholder: "Password" %>
             </div>
-            <div class="d-grid gap-2">
-              <%= form.submit "Login", class: "btn btn-primary btn-block" %>
+            <!-- Remember Input -->
+            <div class="w-full flex flex-row justify-between items-center mb-6">
+                <div class="flex items-center gap-x-1">
+                    <input type="checkbox" name="remember" id="remember" class="w-4 h-4">
+                    <label for="remember" class="text-sm text-slate-400">Remember me</label>
+                </div>
+                <div>
+                    <a href="#" class="text-sm text-slate-400 hover:text-blue-500">Forgot?</a>
+                </div>
             </div>
-          <% end %>
+            <!-- Button -->
+            <div class="w-full mt-4">
+                <%= form.submit "Login", class: "py-4 bg-blue-400 w-full rounded text-blue-50 font-bold hover:bg-blue-700" %>
+            </div>
+            <% end %>
+            <br>
+            <h1>Don't have an account?</h1>
+            <%= link_to 'Sign Up', new_user_path, class: "font-bold" %>
         </div>
-      </div>
-         <%= link_to 'Sign Up', new_user_path %>
-    </div>
-  </div>
-</div>
+     </div>
+</body>
+</html>
 

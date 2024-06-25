@@ -4,43 +4,29 @@
   <title>Cibum</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-
-  <%= stylesheet_link_tag 'application', media: 'all' %>
-  <%= javascript_importmap_tags %>
-  
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
+  <%= stylesheet_link_tag 'output', media: 'all' %>
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <%= link_to 'Cibum', root_path, class: 'navbar-brand' %>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <%= link_to 'Home', root_path, class: 'nav-link active' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to 'Add Recipe', new_recipe_path, class: 'nav-link active' %>
-          </li>
-          <!-- Add more menu items as needed -->
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <% if logged_in? %>
-              <%= link_to 'Logout', logout_path, method: :delete, class: 'nav-link' %>
-            <% else %>
-              <%= link_to 'Login', login_path, class: 'nav-link' %>
-            <% end %>
-          </li>
-        </ul>
+<body class="bg-gray-100">
+  <nav class="bg-white p-4 shadow">
+    <div class="container mx-auto flex justify-between items-center">
+      <%= link_to 'Cibum', root_path, class: 'text-xl font-bold text-gray-900' %>
+      <div>
+        <% if logged_in? %>
+          <%= link_to 'My Recipes', recipes_path, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
+          <%= link_to 'Logout', logout_path, method: :delete, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
+        <% else %>
+          <%= link_to 'Login', login_path, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
+        <% end %>
       </div>
     </div>
   </nav>
 
-  <div class="container mt-4">
+  <div class="container mx-auto mt-8">
     <%= yield %>
   </div>
 </body>
 </html>
+
+

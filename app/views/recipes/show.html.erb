@@ -1,21 +1,24 @@
-<p>
-  <strong>Name:</strong>
-  <%= @recipe.name %>
-</p>
+<div class="max-w-4xl mx-auto mt-8 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  <h2 class="text-3xl font-bold mb-4"><%= @recipe.name %></h2>
 
-<p>
-  <strong>Directions:</strong>
-  <%= @recipe.directions %>
-</p>
+  <div class="mb-4">
+    <h3 class="text-xl font-bold mb-2">Directions</h3>
+    <p class="text-gray-700"><%= simple_format(@recipe.directions) %></p>
+  </div>
 
-<h3>Ingredients:</h3>
-<ul>
-  <% @recipe.ingredients.each do |ingredient| %>
-    <li><%= ingredient.name %></li>
-  <% end %>
-</ul>
+  <div class="mb-4">
+    <h3 class="text-xl font-bold mb-2">Ingredients</h3>
+    <ul class="list-disc list-inside">
+      <% @recipe.ingredients.each do |ingredient| %>
+        <li class="text-gray-700"><%= ingredient.name %></li>
+      <% end %>
+    </ul>
+  </div>
 
-<p>
-  <%= link_to 'Edit', edit_recipe_path(@recipe) %> |
-  <%= link_to 'Back', recipes_path %> |
-</p>
+  <div class="flex justify-between mt-6">
+    <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+    <%= link_to 'Back', recipes_path, class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded' %>
+    <%= link_to 'Delete', recipe_path(@recipe), method: :delete, data: { confirm: 'Are you sure?' }, class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' %>
+  </div>
+</div>
+

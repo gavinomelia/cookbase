@@ -1,22 +1,29 @@
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-md-8">
-      <h2>My Recipes</h2>
-      <ul class="list-group">
-      <% if logged_in?%>
-        <% @recipes.each do |recipe| %>
-          <li class="list-group-item">
-            <%= link_to recipe.name, recipe_path(recipe) %>
-          </li>
-        <% end %>
-      <% else %>
-        <li class="list-group-item">Add a new recipe to get started.</li>
-      <% end %>      
-      </ul>
-    </div>
-    <div class="col-md-4">
-      <!-- Optional: Add a sidebar with additional information or actions -->
-    </div>
+<div class="container mx-auto mt-8">
+  <h2 class="text-2xl font-bold mb-4">My Recipes</h2>
+  <div class="flex justify-end mb-4">
+    <%= link_to 'New Recipe', new_recipe_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded' %>
   </div>
+  <ul class="space-y-4">
+    <% if logged_in? %>
+      <% @recipes.each do |recipe| %>
+        <li class="bg-white p-4 rounded-lg shadow">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-xl font-bold"><%= link_to recipe.name, recipe_path(recipe), class: 'text-blue-500 hover:underline' %></h3>
+              <p class="text-gray-700"><%= truncate(recipe.directions, length: 100) %></p>
+            </div>
+            <div class="flex space-x-2">
+              <%= link_to 'Edit', edit_recipe_path(recipe), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+              <%= link_to 'Delete', recipe_path(recipe), method: :delete, data: { confirm: 'Are you sure?' }, class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    <% else %>
+      <li class="bg-white p-4 rounded-lg shadow">
+        <p class="text-gray-700">No recipes found</p>
+      </li>
+    <% end %>
+  </ul>
 </div>
 
