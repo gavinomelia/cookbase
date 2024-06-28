@@ -7,6 +7,8 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.3"
 
 gem 'tailwindcss-rails'
 
+gem 'letter_opener', group: :development
+
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 

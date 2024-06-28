@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   # User registration routes
   resources :users, only: [:new, :create]
+  resources :password_resets, only: [:create, :new, :edit, :update]
   
   # Session routes for login/logout
   get '/login', to: 'sessions#new', as: :login
