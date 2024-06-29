@@ -42,9 +42,9 @@ class RecipesController < ApplicationController
   end
 
   def destroy
-    # @recipe is set in set_recipe before_action
     @recipe.destroy
-    redirect_to recipes_url, notice: 'Recipe was successfully destroyed.'
+
+    redirect_to root_path
   end
 
   private
