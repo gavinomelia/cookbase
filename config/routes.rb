@@ -9,8 +9,11 @@ Rails.application.routes.draw do
   get '/logout', to: 'sessions#destroy', as: :logout
 
   # Recipe routes
-  resources :recipes
-
+ resources :recipes do
+  member do
+    get :scale
+  end
+end
   # Root route
   root "recipes#index"
 end

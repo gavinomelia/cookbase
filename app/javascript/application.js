@@ -32,3 +32,4 @@ function addFields(event) {
   newField.querySelector('.remove_ingredient').addEventListener('click', removeFields);
 }
 
+

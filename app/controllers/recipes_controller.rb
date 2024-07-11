@@ -1,6 +1,6 @@
 class RecipesController < ApplicationController
   before_action :require_login, except: [:index, :show]
-  before_action :set_recipe, only: [:show, :edit, :update, :destroy]
+  before_action :set_recipe, only: [:show, :edit, :update, :scale, :destroy]
 
   # GET /recipes
   def index
@@ -11,6 +11,7 @@ class RecipesController < ApplicationController
   end
 
   def show
+    @scaled_ingredients = []
   end
 
   def new
@@ -18,7 +19,6 @@ class RecipesController < ApplicationController
   end
 
   def edit
-   # @recipe.ingredients.build if @recipe.ingredients.empty?
   end
 
   def create
@@ -32,8 +32,6 @@ class RecipesController < ApplicationController
   end
 
   def update
-    # @recipe is set in set_recipe before_action
-
     if @recipe.update(recipe_params)
       redirect_to @recipe, notice: 'Recipe was successfully updated.'
     else
@@ -47,15 +45,31 @@ class RecipesController < ApplicationController
     redirect_to root_path
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
+  
+  def scale
+    scale_factor = params[:scale_factor].to_f
+    @scaled_ingredients = @recipe.ingredients.map do |ingredient|
+      {
+        id: ingredient.id,
+        name: ingredient.name,
+        scaled_quantity: (ingredient.quantity || 1) * scale_factor
+      }
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+ 
+private
+
     def set_recipe
       @recipe = Recipe.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def recipe_params
-      params.require(:recipe).permit(:name, :directions, ingredients_attributes: [:id, :name, :_destroy])
+      params.require(:recipe).permit(:name, :directions, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
     end
 
     # Ensure user is logged in before accessing recipes

@@ -1,0 +1,9 @@
+<%= turbo_stream.replace "scaled_ingredients" do %>
+  <div id="scaled_ingredients">
+    <% @scaled_ingredients.each do |ingredient| %>
+      <p id="ingredient_<%= ingredient[:id] %>">
+        <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> - <%= ingredient[:name] %>
+      </p>
+    <% end %>
+  </div>
+<% end %>

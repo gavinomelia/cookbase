@@ -20,8 +20,9 @@
         </div>
       <% end %>
     </div>
-
-    <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3" %>
+    <div class="flex space-y-50">
+    <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded mt-3" %>
+    </div>
 
     <div class="mt-4">
       <%= form.submit "Save Recipe", class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
