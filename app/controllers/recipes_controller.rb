@@ -1,10 +1,12 @@
 class RecipesController < ApplicationController
+require 'open-uri'
+require 'nokogiri'
+
   before_action :require_login, except: [:index, :show]
   before_action :set_recipe, only: [:show, :edit, :update, :scale, :destroy]
 
   # GET /recipes
   def index
-   # @recipes = []
      if logged_in?
       @recipes = current_user.recipes
     end
@@ -60,8 +62,76 @@ class RecipesController < ApplicationController
       format.turbo_stream
     end
   end
- 
+
+  def scrape
+    url = params[:scrape_url]
+    return redirect_to new_recipe_path, alert: "URL can't be blank" if url.blank?
+
+    begin
+      html = URI.open(url)
+      doc = Nokogiri::HTML(html)
+
+      ingredients = extract_ingredients(doc)
+      directions = extract_directions(doc)
+
+      name = doc.at_css('h1').text.strip rescue "Untitled Recipe"
+
+      @recipe = current_user.recipes.build(name: name, directions: directions)
+
+      ingredients.each do |ingredient|
+        @recipe.ingredients.build(name: ingredient)
+        puts "Ingredient: #{ingredient}"
+      end
+
+      if @recipe.save
+        redirect_to @recipe, notice: 'Recipe was successfully scraped and saved.'
+      else
+        render :new
+      end
+    rescue => e
+      redirect_to new_recipe_path, alert: "Failed to scrape the recipe. Please check the URL and try again. Error: #{e.message}"
+    end
+  end
+
 private
+
+    def extract_ingredients(doc)
+      ingredient_selectors = [
+        '#mm-recipes-structured-ingredients_1-0 .mm-recipes-structured-ingredients__list-item',
+        '.recipe-ingredients__list-item',
+        '.ingredient-list-item'
+      ]
+
+      ingredient_selectors.each do |selector|
+        ingredients = doc.css(selector).map do |item|
+          quantity = item.at_css('span[data-ingredient-quantity]').text.strip rescue nil
+          unit = item.at_css('span[data-ingredient-unit]').text.strip rescue nil
+          name = item.at_css('span[data-ingredient-name]').text.strip rescue nil
+          "#{quantity} #{unit} #{name}".strip if name
+        end.compact
+        return ingredients unless ingredients.empty?
+      end
+
+      []
+    end
+
+    def extract_directions(doc)
+      direction_selectors = [
+        '#mntl-sc-block_1-0 li', 
+        '#mntl-sc-block_3-0 li',
+        '.recipe-directions__list--item',
+       '.mntl-sc-block-group--LI',
+      ]
+
+      direction_selectors.each do |selector|
+        directions = doc.css(selector).map do |step|
+          step.at_css('p').text.strip rescue step.text.strip
+        end.join("\n")
+        return directions unless directions.empty?
+      end
+
+      ""
+    end
 
     def set_recipe
       @recipe = Recipe.find(params[:id])

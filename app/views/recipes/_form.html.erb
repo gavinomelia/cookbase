@@ -1,15 +1,27 @@
+<!-- app/views/recipes/_form.html.erb -->
+
+<!-- Form for scraping a recipe -->
+<%= form_with(url: scrape_recipes_path, method: :post, local: true) do |form| %>
+  <div class="mb-4">
+    <%= form.label :scrape_url, "Scrape Recipe URL", class: "block text-gray-700 text-sm font-bold mb-2" %>
+    <%= form.text_field :scrape_url, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+  </div>
+  <div class="mt-4">
+    <%= form.submit "Scrape Recipe", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+<% end %>
+
+<!-- Form for creating/editing a recipe -->
 <div class="container mt-4">
-  <%= form_with(model: recipe) do |form| %>
+  <%= form_with(model: @recipe, local: true) do |form| %>
     <div class="mb-4">
       <%= form.label :name, class: "block text-gray-700 text-sm font-bold mb-2" %>
       <%= form.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
     </div>
-
     <div class="mb-4">
       <%= form.label :directions, "Directions", class: "block text-gray-700 text-sm font-bold mb-2" %>
       <%= form.text_area :directions, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", required: true %>
     </div>
-
     <h3 class="text-lg font-bold mb-2">Ingredients</h3>
     <div id="ingredients" class="space-y-4">
       <%= form.fields_for :ingredients do |f| %>
@@ -21,9 +33,8 @@
       <% end %>
     </div>
     <div class="flex space-y-50">
-    <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded mt-3" %>
+      <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded mt-3" %>
     </div>
-
     <div class="mt-4">
       <%= form.submit "Save Recipe", class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
     </div>

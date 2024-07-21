@@ -12,6 +12,10 @@ gem 'letter_opener', group: :development
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
+gem "nokogiri", "~> 1.16.6"
+
+gem 'open-uri' 
+
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", "~> 1.4"
 

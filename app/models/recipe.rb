@@ -3,6 +3,6 @@ class Recipe < ApplicationRecord
   has_many :ingredients, dependent: :destroy
   accepts_nested_attributes_for :ingredients, allow_destroy: true
 
-  validates :name, presence: true
-  validates :directions, presence: true
+  validates :name, :directions, :user, presence: true
+
 end

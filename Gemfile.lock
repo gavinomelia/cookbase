@@ -183,6 +183,10 @@ GEM
       rack (>= 1.2, < 4)
       snaky_hash (~> 2.0)
       version_gem (~> 1.1)
+    open-uri (0.4.1)
+      stringio
+      time
+      uri
     psych (5.1.2)
       stringio
     public_suffix (5.1.1)
@@ -277,6 +281,8 @@ GEM
     tailwindcss-rails (2.6.1-x86_64-linux)
       railties (>= 7.0.0)
     thor (1.3.1)
+    time (0.3.0)
+      date
     timeout (0.4.1)
     turbo-rails (2.0.5)
       actionpack (>= 6.0.0)
@@ -315,6 +321,8 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   letter_opener
+  nokogiri (~> 1.16.6)
+  open-uri
   puma (>= 5.0)
   rails (~> 7.1.3, >= 7.1.3.3)
   selenium-webdriver

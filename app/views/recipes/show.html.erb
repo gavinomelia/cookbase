@@ -31,7 +31,11 @@
 
   <div class="mb-4">
     <h3 class="text-xl font-bold mb-2">Directions</h3>
-    <p class="text-gray-700"><%= simple_format(@recipe.directions) %></p>
+    <ol class="list-decimal list-inside">
+  <% @recipe.directions.split("\n").each do |step| %>
+    <li> <%= step.strip %></li><br>
+  <% end %>
+    </ol>
   </div>
 
   <div class="flex justify-between mt-6">

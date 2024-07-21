@@ -8,8 +8,12 @@ Rails.application.routes.draw do
   post '/login', to: 'sessions#create'
   get '/logout', to: 'sessions#destroy', as: :logout
 
+
   # Recipe routes
  resources :recipes do
+    collection do
+      post 'scrape'
+    end
   member do
     get :scale
   end
