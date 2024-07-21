@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cibum</title>
+  <title>Cookbase</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
@@ -11,7 +11,7 @@
 <%= turbo_include_tags %>
   <nav class="bg-white p-4 shadow">
     <div class="container mx-auto flex justify-between items-center">
-      <%= link_to 'Cibum', root_path, class: 'text-xl font-bold text-gray-900' %>
+      <%= link_to 'Cookbase', root_path, class: 'text-xl font-bold text-gray-900' %>
       <div>
         <% if logged_in? %>
           <%= link_to 'My Recipes', recipes_path, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
