@@ -1,5 +1,5 @@
 # README
-## Cibum: A cookbook for the modern age.
+## Cookbase: A cookbook for the modern age.
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
