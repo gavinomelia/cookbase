@@ -11,7 +11,7 @@
 <%= turbo_include_tags %>
   <nav class="bg-white p-4 shadow">
     <div class="container mx-auto flex justify-between items-center">
-    <%= link_to image_tag('cookbase.png'), root_path %>
+    <%= link_to image_tag('cookbase.svg'), root_path %>
       <div>
         <% if logged_in? %>
           <%= link_to 'My Recipes', recipes_path, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
