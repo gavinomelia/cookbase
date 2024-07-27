@@ -14,7 +14,7 @@ gem "sprockets-rails"
 
 gem "nokogiri", "~> 1.16.6"
 
-gem 'open-uri' 
+gem 'open-uri'
 
 # Use sqlite3 as the database for Active Record
 

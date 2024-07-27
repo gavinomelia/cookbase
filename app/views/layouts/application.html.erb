@@ -4,8 +4,8 @@
   <title>Cookbase</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload'  %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %> 
+    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload'  %>
 </head>
 <body class="bg-gray-100">
 <%= turbo_include_tags %>
@@ -22,6 +22,7 @@
       </div>
     </div>
   </nav>
+
 
   <div class="container mx-auto mt-8">
     <%= yield %>
