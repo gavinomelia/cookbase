@@ -38,6 +38,13 @@
     </ol>
   </div>
 
+  <div class="mb-4">
+ <h3 class="text-xl font-bold mb-2">URL</h3>
+ <p>
+ <%= @recipe.url %>
+ </p>
+  </div>
+
   <div class="flex justify-between mt-6">
     <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
     <%= link_to 'Back', recipes_path, class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded' %>

@@ -22,6 +22,12 @@
       <%= form.label :directions, "Directions", class: "block text-gray-700 text-sm font-bold mb-2" %>
       <%= form.text_area :directions, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", required: true %>
     </div>
+
+  <div class="mb-4">
+    <%= form.label :url, class: "block text-gray-700 text-sm font-bold mb-2"  %>
+    <%= form.text_field :url, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+  </div>
+
     <h3 class="text-lg font-bold mb-2">Ingredients</h3>
     <div id="ingredients" class="space-y-4">
       <%= form.fields_for :ingredients do |f| %>

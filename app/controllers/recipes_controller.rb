@@ -76,7 +76,7 @@ require 'nokogiri'
 
       name = doc.at_css('h1').text.strip rescue "Untitled Recipe"
 
-      @recipe = current_user.recipes.build(name: name, directions: directions)
+      @recipe = current_user.recipes.build(name: name, directions: directions, url: url)
 
       ingredients.each do |ingredient|
         @recipe.ingredients.build(name: ingredient)
@@ -139,7 +139,7 @@ private
 
     # Only allow a list of trusted parameters through.
     def recipe_params
-      params.require(:recipe).permit(:name, :directions, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
+      params.require(:recipe).permit(:name, :directions, :url, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
     end
 
     # Ensure user is logged in before accessing recipes
