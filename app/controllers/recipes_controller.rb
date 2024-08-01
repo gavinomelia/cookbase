@@ -64,6 +64,7 @@ require 'nokogiri'
   end
 
   def scrape
+# Currently Supported: Allrecipes, TasteofHome, SimplyRecipes 
     url = params[:scrape_url]
     return redirect_to new_recipe_path, alert: "URL can't be blank" if url.blank?
 
@@ -71,16 +72,14 @@ require 'nokogiri'
       html = URI.open(url)
       doc = Nokogiri::HTML(html)
 
+      name = extract_name(doc) 
       ingredients = extract_ingredients(doc)
       directions = extract_directions(doc)
-
-      name = doc.at_css('h1').text.strip rescue "Untitled Recipe"
 
       @recipe = current_user.recipes.build(name: name, directions: directions, url: url)
 
       ingredients.each do |ingredient|
         @recipe.ingredients.build(name: ingredient)
-        puts "Ingredient: #{ingredient}"
       end
 
       if @recipe.save
@@ -95,19 +94,23 @@ require 'nokogiri'
 
 private
 
+    def extract_name(doc)
+      doc.at_css('h1').text.strip rescue "Untitled Recipe"
+    end
+
     def extract_ingredients(doc)
       ingredient_selectors = [
         '#mm-recipes-structured-ingredients_1-0 .mm-recipes-structured-ingredients__list-item',
         '.recipe-ingredients__list-item',
-        '.ingredient-list-item'
+        '.ingredient-list-item',
+              '.ingredient', '.ingredients li', '.recipe-ingredients li', 
+      '.ingredients .ingredient-item', '.ingredients-item', 
+      '.ingredient-list li', '.ingredients-list li', '.recipe-ingredients__list li', '.structured-ingredients__list li'    
       ]
 
       ingredient_selectors.each do |selector|
         ingredients = doc.css(selector).map do |item|
-          quantity = item.at_css('span[data-ingredient-quantity]').text.strip rescue nil
-          unit = item.at_css('span[data-ingredient-unit]').text.strip rescue nil
-          name = item.at_css('span[data-ingredient-name]').text.strip rescue nil
-          "#{quantity} #{unit} #{name}".strip if name
+          item.text.strip
         end.compact
         return ingredients unless ingredients.empty?
       end
@@ -121,6 +124,9 @@ private
         '#mntl-sc-block_3-0 li',
         '.recipe-directions__list--item',
        '.mntl-sc-block-group--LI',
+             '.instruction', '.directions li', '.recipe-directions li', 
+      '.steps li', '.step', '.direction', '.instruction-step', 
+      '.method-steps li', '.instructions li'
       ]
 
       direction_selectors.each do |selector|
