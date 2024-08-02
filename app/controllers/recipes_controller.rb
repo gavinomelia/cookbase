@@ -145,7 +145,7 @@ private
 
     # Only allow a list of trusted parameters through.
     def recipe_params
-      params.require(:recipe).permit(:name, :directions, :url, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
+      params.require(:recipe).permit(:name, :directions, :image, :url, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
     end
 
     # Ensure user is logged in before accessing recipes

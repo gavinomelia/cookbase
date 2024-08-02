@@ -1,4 +1,10 @@
 <div class="max-w-4xl mx-auto mt-8 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+<% if @recipe.image.attached? %>
+  <p>
+    <strong>Image:</strong>
+    <%= image_tag @recipe.image %>
+  </p>
+<% end %>
   <h2 class="text-3xl font-bold mb-4"><%= @recipe.name %></h2>
 <div class="relative mb-6">
 <label for="scale-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Multiply your recipe</label>
