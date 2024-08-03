@@ -79,3 +79,5 @@ end
 gem "pg", "~> 1.5"
 
 gem "aws-sdk-s3", "~> 1.157"
+
+gem "acts-as-taggable-on", "~> 10.0"

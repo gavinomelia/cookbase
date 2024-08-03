@@ -24,6 +24,11 @@
    <div id="scale_value" class="text-gray-700 text-sm font-bold mt-2">1.0x</div>
 </div>
 
+<p>
+  <strong>Tags:</strong>
+  <%= @recipe.tag_list.join(", ") %>
+</p>
+
 <%= turbo_frame_tag "scaled_ingredients" do %>
   <div class="mb-4">
     <h3 class="text-xl font-bold mb-2">Ingredients</h3>
