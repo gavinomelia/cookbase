@@ -81,3 +81,7 @@ gem "pg", "~> 1.5"
 gem "aws-sdk-s3", "~> 1.157"
 
 gem "acts-as-taggable-on", "~> 10.0"
+
+gem 'image_processing', '~> 1.2'
+
+gem 'mini_magick'
