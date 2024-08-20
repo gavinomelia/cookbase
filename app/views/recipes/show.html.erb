@@ -50,6 +50,11 @@
   </div>
 
   <div class="mb-4">
+    <h3 class="text-xl font-bold mb-2">Notes</h3>
+     <p><%= simple_format(@recipe.notes) %></p>
+  </div>
+
+  <div class="mb-4">
  <h3 class="text-xl font-bold mb-2">URL</h3>
  <p>
  <%= @recipe.url %>

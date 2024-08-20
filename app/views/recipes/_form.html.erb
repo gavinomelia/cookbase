@@ -24,7 +24,7 @@
     </div>
     <div class="mb-4">
       <%= form.label :directions, "Directions", class: "block text-gray-700 text-sm font-bold mb-2" %>
-      <%= form.text_area :directions, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", required: true %>
+      <%= form.text_area :directions, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", rows: 6, required: true %>
     </div>
 
   <div class="mb-4">
@@ -50,7 +50,14 @@
     <div class="flex space-y-50">
       <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded mt-3" %>
     </div>
-    <div class="mt-4">
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold mb-2">Notes</h3>
+ <%= form.text_area :notes, class: "w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none", rows: 5, placeholder: "Enter your notes here..." %>
+  </div>
+
+
+    <div class="mt-4 mb-4">
       <%= form.submit "Save Recipe", class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
     </div>
   <% end %>
