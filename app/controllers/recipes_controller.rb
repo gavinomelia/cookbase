@@ -1,6 +1,7 @@
 class RecipesController < ApplicationController
 require 'open-uri'
 require 'nokogiri'
+require 'json'
 
   before_action :require_login, except: [:index, :show]
   before_action :set_recipe, only: [:show, :edit, :update, :scale, :destroy]
@@ -63,81 +64,60 @@ require 'nokogiri'
     end
   end
 
+
+
   def scrape
-# Currently Supported: Allrecipes, TasteofHome, SimplyRecipes 
     url = params[:scrape_url]
     return redirect_to new_recipe_path, alert: "URL can't be blank" if url.blank?
+    html = URI.open(url).read
+    doc = Nokogiri::HTML(html)
 
-    begin
-      html = URI.open(url)
-      doc = Nokogiri::HTML(html)
+    json_ld_scripts = doc.css('script[type="application/ld+json"]') 
 
-      name = extract_name(doc) 
-      ingredients = extract_ingredients(doc)
-      directions = extract_directions(doc)
+  json_ld_scripts.each do |script|
+    json_content = JSON.parse(script.text)
+    
+  recipe_data = case json_content
+  when Hash
+    if json_content["@graph"]
+      json_content["@graph"].find { |item| item["@type"] == "Recipe" }
+    elsif json_content["@type"] == "Recipe" 
+      json_content
+    end
+  when Array
+    json_content.find { |item| item["@type"] == "Recipe" || ["Recipe"]}
+  end
+
+  if recipe_data
+    recipe = {
+    name: recipe_data["name"],
+    ingredients: recipe_data["recipeIngredient"],
+    directions: recipe_data["recipeInstructions"].map { |step| step["text"] }
+    }
+
+        name = recipe[:name]
+        directions = recipe[:directions]
+        ingredients = recipe[:ingredients]
 
       @recipe = current_user.recipes.build(name: name, directions: directions, url: url)
-
+  
       ingredients.each do |ingredient|
         @recipe.ingredients.build(name: ingredient)
       end
 
       if @recipe.save
-        redirect_to @recipe, notice: 'Recipe was successfully scraped and saved.'
+        return redirect_to @recipe, notice: 'Recipe was successfully scraped and saved.'
       else
         render :new
       end
-    rescue => e
-      redirect_to new_recipe_path, alert: "Failed to scrape the recipe. Please check the URL and try again. Error: #{e.message}"
+  else
+     return redirect_to new_recipe_path, alert: "Failed to scrape the recipe. Please check the URL and try again. You may need to enter the recipe manually."
+
+  end
     end
   end
 
 private
-
-    def extract_name(doc)
-      doc.at_css('h1').text.strip rescue "Untitled Recipe"
-    end
-
-    def extract_ingredients(doc)
-      ingredient_selectors = [
-        '#mm-recipes-structured-ingredients_1-0 .mm-recipes-structured-ingredients__list-item',
-        '.recipe-ingredients__list-item',
-        '.ingredient-list-item',
-              '.ingredient', '.ingredients li', '.recipe-ingredients li', 
-      '.ingredients .ingredient-item', '.ingredients-item', 
-      '.ingredient-list li', '.ingredients-list li', '.recipe-ingredients__list li', '.structured-ingredients__list li'    
-      ]
-
-      ingredient_selectors.each do |selector|
-        ingredients = doc.css(selector).map do |item|
-          item.text.strip
-        end.compact
-        return ingredients unless ingredients.empty?
-      end
-
-      []
-    end
-
-    def extract_directions(doc)
-      direction_selectors = [
-        '#mntl-sc-block_1-0 li', 
-        '#mntl-sc-block_3-0 li',
-        '.recipe-directions__list--item',
-       '.mntl-sc-block-group--LI',
-             '.instruction', '.directions li', '.recipe-directions li', 
-      '.steps li', '.step', '.direction', '.instruction-step', 
-      '.method-steps li', '.instructions li'
-      ]
-
-      direction_selectors.each do |selector|
-        directions = doc.css(selector).map do |step|
-          step.at_css('p').text.strip rescue step.text.strip
-        end.join("\n")
-        return directions unless directions.empty?
-      end
-
-      ""
-    end
 
     def set_recipe
       @recipe = Recipe.find(params[:id])
