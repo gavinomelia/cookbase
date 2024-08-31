@@ -64,60 +64,106 @@ require 'json'
     end
   end
 
-
-
   def scrape
     url = params[:scrape_url]
     return redirect_to new_recipe_path, alert: "URL can't be blank" if url.blank?
-    html = URI.open(url).read
+
+    html = fetch_html(url)
     doc = Nokogiri::HTML(html)
-
-    json_ld_scripts = doc.css('script[type="application/ld+json"]') 
-
-  json_ld_scripts.each do |script|
-    json_content = JSON.parse(script.text)
+    json_contents = parse_json_ld(doc)
     
-  recipe_data = case json_content
-  when Hash
-    if json_content["@graph"]
-      json_content["@graph"].find { |item| item["@type"] == "Recipe" }
-    elsif json_content["@type"] == "Recipe" 
-      json_content
-    end
-  when Array
-    json_content.find { |item| item["@type"] == "Recipe" || ["Recipe"]}
-  end
+      recipe_data = find_recipe_data(json_contents)
+      if recipe_data
+        recipe_attrs = extract_recipe_attributes(recipe_data)
 
-  if recipe_data
-    recipe = {
-    name: recipe_data["name"],
-    ingredients: recipe_data["recipeIngredient"],
-    directions: recipe_data["recipeInstructions"].map { |step| step["text"] }
-    }
+        @recipe = current_user.recipes.build(
+          name: recipe_attrs[:name],
+          directions: recipe_attrs[:directions],
+          url: url
+        )
 
-        name = recipe[:name]
-        directions = recipe[:directions]
-        ingredients = recipe[:ingredients]
+       image_tempfile = attach_image(recipe_attrs[:image_url])
 
-      @recipe = current_user.recipes.build(name: name, directions: directions, url: url)
-  
-      ingredients.each do |ingredient|
+      recipe_attrs[:ingredients].each do |ingredient|
         @recipe.ingredients.build(name: ingredient)
       end
 
       if @recipe.save
-        return redirect_to @recipe, notice: 'Recipe was successfully scraped and saved.'
-      else
-        render :new
-      end
-  else
-     return redirect_to new_recipe_path, alert: "Failed to scrape the recipe. Please check the URL and try again. You may need to enter the recipe manually."
+        image_tempfile.close
+        image_tempfile.unlink
 
+        redirect_to @recipe, notice: 'Recipe was successfully scraped and saved.'
+      else
+        image_tempfile.close
+        image_tempfile.unlink if image_tempfile.present?
+
+        render :new, alert: 'Failed to save the recipe.'
+      end
+      else
+        redirect_to new_recipe_path, alert: "Failed to scrape recipe from URL."
+      end
   end
-    end
-  end
+
 
 private
+    def extract_recipe_attributes(recipe_data)
+      {
+        name: recipe_data["name"],
+        image_url: recipe_data["image"],
+        ingredients: recipe_data["recipeIngredient"],
+        directions: recipe_data["recipeInstructions"].map { |step| step["text"] }
+      }
+    end
+
+
+    def find_recipe_data(json_contents)
+      json_contents.each do |json_content|
+        recipe_data = case json_content
+        when Hash
+          if json_content["@graph"]
+            json_content["@graph"].find { |item| item["@type"] == "Recipe" }
+          elsif json_content["@type"] == "Recipe"
+            json_content
+          end
+        when Array
+          json_content.find { |item| item["@type"] == "Recipe" }
+        end
+        return recipe_data if recipe_data
+      end
+      nil
+    end
+
+    def fetch_html(url)
+      URI.open(url).read
+    end
+
+    def attach_image(image_url)
+      return if image_url.blank?
+
+      image_url = image_url.first if image_url.is_a?(Array)
+      image_url = image_url["url"] if image_url.is_a?(Hash)
+      image_file = URI.parse(image_url).open
+      extension = File.extname(URI.parse(image_url).path)
+      file = Tempfile.new(['recipe_image', extension])
+
+    begin
+      file.binmode
+      file.write(image_file.read)
+      file.rewind
+
+      @recipe.image.attach(io: file, filename: File.basename(image_url))
+      
+      file 
+    end
+    rescue => e
+      Rails.logger.error "Failed to attach image: #{e.message}"
+      file.unlink if file
+    end
+
+    def parse_json_ld(doc)
+      json_ld_scripts = doc.css('script[type="application/ld+json"]')
+      json_ld_scripts.map { |script| JSON.parse(script.text) }
+    end
 
     def set_recipe
       @recipe = Recipe.find(params[:id])

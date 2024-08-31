@@ -8,6 +8,6 @@ class Recipe < ApplicationRecord
   validates :name, :directions, :user, presence: true
 
   validates :url, format: { with: URI::regexp(%w[http https]) }, allow_blank: true
-has_one_attached :image
+  has_one_attached :image
 
 end
