@@ -10,7 +10,6 @@
           <div class="flex justify-between items-center">
             <div>
               <h3 class="text-xl font-bold"><%= link_to recipe.name, recipe_path(recipe), class: 'text-blue-500 hover:underline' %></h3>
-              <p class="text-gray-700"><%= truncate(recipe.directions, length: 100) %></p>
             </div>
             <div class="flex space-x-2">
               <%= link_to 'Edit', edit_recipe_path(recipe), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
