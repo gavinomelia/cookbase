@@ -65,14 +65,18 @@ require 'json'
   end
 
   def scrape
+  puts "SCRAPE CALLED"
     url = params[:scrape_url]
+    puts "URL = #{url}"
     return redirect_to new_recipe_path, alert: "URL can't be blank" if url.blank?
 
     html = fetch_html(url)
     doc = Nokogiri::HTML(html)
     json_contents = parse_json_ld(doc)
+   # puts json_contents
     
       recipe_data = find_recipe_data(json_contents)
+    #  puts "RECIPE DATA = #{recipe_data}"
       if recipe_data
         recipe_attrs = extract_recipe_attributes(recipe_data)
 
@@ -87,6 +91,8 @@ require 'json'
       recipe_attrs[:ingredients].each do |ingredient|
         @recipe.ingredients.build(name: ingredient)
       end
+
+      puts "RECIPE DATA = #{recipe_data}"
 
       if @recipe.save
         image_tempfile.close
@@ -118,15 +124,18 @@ private
 
     def find_recipe_data(json_contents)
       json_contents.each do |json_content|
+     # puts "json content = #{json_content}"
         recipe_data = case json_content
         when Hash
+        puts "HASH"
           if json_content["@graph"]
             json_content["@graph"].find { |item| item["@type"] == "Recipe" }
           elsif json_content["@type"] == "Recipe"
             json_content
           end
         when Array
-          json_content.find { |item| item["@type"] == "Recipe" }
+        puts "ARRAY"
+          json_content.find { |item| item["@type"].include?("Recipe") }
         end
         return recipe_data if recipe_data
       end
