@@ -1,40 +1,4 @@
-<div class="container mx-auto mt-8">
-  <h2 class="text-2xl font-bold mb-4">My Recipes</h2>
-  <div class="flex justify-end mb-4">
-    <%= link_to 'New Recipe', new_recipe_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded' %>
-  </div>
-  <ul class="space-y-4">
-    <% if logged_in? %>
-      <% @recipes.each do |recipe| %>
-        <li class="bg-white p-4 rounded-lg shadow">
-          <div class="flex justify-between items-center">
-            <div>
-              <h3 class="text-xl font-bold"><%= link_to recipe.name, recipe_path(recipe), class: 'text-blue-500 hover:underline' %></h3>
-              <p class="text-gray-700"><%= truncate(recipe.directions, length: 100) %></p>
-            </div>
-            <div class="flex space-x-2">
-              <%= link_to 'Edit', edit_recipe_path(recipe), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
-              <%= link_to 'Delete', recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this recipe? Deleting a recipe cannot be undone.' }, method: :delete, class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' %>
-            </div>
-          </div>
-        </li>
-      <% end %>
 
-
-    <% else %>
-      <li class="bg-white p-4 rounded-lg shadow">
-        <p class="text-gray-700">No recipes found</p>
-      </li>
-    <% end %>
-  </ul>
-
-</div>
-
-
-<br>
-<br>
-<br>
-<br>
 
 <div class="bg-gray-200 mx-auto p-8 rounded-lg">
 <div class="flex items-center justify-center py-4 md:py-8 flex-wrap">
@@ -48,18 +12,27 @@
 
 
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  gap-4">
-<% @recipes.each do |recipe| %>
 
-    <div>
-
+<% if logged_in? %>
+  <% @recipes.each do |recipe| %>
        <%= link_to recipe_path(recipe) do %>
-        <img class="h-auto max-w-full rounded-lg" src="https://www.tasteofhome.com/wp-content/uploads/2017/10/Slow-Cooked-Vegetable-Curry_EXPS_SDAS17_148481_D04_07_5b.jpg" alt="">
-         <% end %>
+       <% if recipe.image.attached? %>
+     <%= image_tag recipe.image.variant(resize_to_fill: [400, 400]) %>
+        <% end %>
+     <% end %>
        <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
 
     </div>
 
  <% end %>
+
+  <% else %>
+      <li class="bg-white p-4 rounded-lg shadow">
+        <p class="text-gray-700">No recipes found</p>
+      </li>
+    <% end %>
+
+
 </div>
 
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  gap-4">
