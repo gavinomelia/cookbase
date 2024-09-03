@@ -45,11 +45,12 @@
   <div class="mb-4">
     <h3 class="text-xl font-bold mb-2">Directions</h3>
     <ol class="list-decimal list-inside">
-   <% if @recipe.directions.is_a?(Array) %>
+
+   <% begin %>
    <% JSON.parse(@recipe.directions).each do |direction| %>
      <li class="text-gray-700"><%= direction %></li>
    <% end %>
-   <% else %>
+   <% rescue %>
      <% @recipe.directions.split("\n").each do |step| %>
       <li> <%= step.strip %></li><br>
     <% end %>

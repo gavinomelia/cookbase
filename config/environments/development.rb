@@ -8,6 +8,11 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.enable_reloading = true
 
+  # Enable lazy image loading to improve load times
+  Rails.application.configure do
+    config.action_view.image_loading = "lazy"
+  end
+
   # Do not eager load code on boot.
   config.eager_load = false
 

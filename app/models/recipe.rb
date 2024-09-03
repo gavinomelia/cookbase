@@ -10,4 +10,17 @@ class Recipe < ApplicationRecord
   validates :url, format: { with: URI::regexp(%w[http https]) }, allow_blank: true
   has_one_attached :image
 
+  after_commit :processed_image_variants, on: [:create, :update]
+
+def processed_image_variants
+    {
+      thumbnail: image.variant(resize_to_fill: [200, 200]).processed,
+      medium: image.variant(resize_to_fill: [400, 400]).processed
+    }
+  end
+
+
+private
+
+
 end

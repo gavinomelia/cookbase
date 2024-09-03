@@ -12,6 +12,11 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
+  # Enable lazy image loading to improve load times
+  Rails.application.configure do
+    config.action_view.image_loading = "lazy"
+  end
+
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true

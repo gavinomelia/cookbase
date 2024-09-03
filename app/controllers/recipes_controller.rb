@@ -9,8 +9,8 @@ require 'json'
   # GET /recipes
   def index
      if logged_in?
-      @recipes = current_user.recipes
-    end
+        @recipes = current_user.recipes.includes(image_attachment: :blob)
+     end
   end
 
   def show
@@ -103,7 +103,6 @@ require 'json'
         redirect_to new_recipe_path, alert: "Failed to scrape recipe from URL."
       end
   end
-
 
 private
     def extract_recipe_attributes(recipe_data)

@@ -1,29 +1,28 @@
-<div class="container mx-auto mt-8">
-  <h2 class="text-2xl font-bold mb-4">My Recipes</h2>
   <div class="flex justify-end mb-4">
-    <%= link_to 'New Recipe', new_recipe_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded' %>
+    <%= link_to 'New Recipe', new_recipe_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4' %>
   </div>
-  <ul class="space-y-4">
-    <% if logged_in? %>
-      <% @recipes.each do |recipe| %>
-        <li class="bg-white p-4 rounded-lg shadow">
-          <div class="flex justify-between items-center">
-            <div>
-              <h3 class="text-xl font-bold"><%= link_to recipe.name, recipe_path(recipe), class: 'text-blue-500 hover:underline' %></h3>
-            </div>
-            <div class="flex space-x-2">
-              <%= link_to 'Edit', edit_recipe_path(recipe), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
-              <%= link_to 'Delete', recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this recipe? Deleting a recipe cannot be undone.' }, method: :delete, class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' %>
-            </div>
-          </div>
-        </li>
+
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  gap-4">
+
+<% if logged_in? %>
+    <% @recipes.each do |recipe| %>
+    <div class="rounded overflow-hidden shadow-lg flex flex-col mb-4">
+       <%= link_to recipe_path(recipe) do %>
+         <% if recipe.image.representable? %>
+        <%= image_tag recipe.processed_image_variants[:medium], :class => "rounded-lg" %>
+         <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
+         <% else %>
+         <%= link_to image_tag('recipe_icon.png'), root_path, :class => "rounded-lg" %>
+        <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
+          <% end %>
+    </div>
+       <% end %>
       <% end %>
-    <% else %>
-      <li class="bg-white p-4 rounded-lg shadow">
-        <p class="text-gray-700">No recipes found</p>
-      </li>
-    <% end %>
-  </ul>
+<% else %>
+  <li class="bg-white p-4 rounded-lg shadow">
+    <p class="text-gray-700">No recipes found</p>
+  </li>
+<% end %>
 
-</div>
-
+    </div>
+  </div>
