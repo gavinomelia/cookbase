@@ -8,9 +8,27 @@ require 'json'
 
   # GET /recipes
   def index
-     if logged_in?
+if logged_in?
         @recipes = current_user.recipes.includes(image_attachment: :blob)
+        else
+          redirect_to :login 
      end
+  end
+
+
+  def search
+  if logged_in?
+    @recipes = if params[:query].present?
+    Recipe.where("name ILIKE ?", "%#{params[:query]}%")
+               else
+                 current_user.recipes
+               end
+
+    respond_to do |format|
+       format.turbo_stream # Handles Turbo request (text/vnd.turbo-stream.html)
+      format.html { render :index } # Fallback for regular HTML requests    
+      end
+    end
   end
 
   def show

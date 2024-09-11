@@ -1,3 +1,17 @@
+//Instant Search Functionality
+document.addEventListener("turbo:load", function() {
+  const searchInput = document.querySelector(".search-input");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", function() {
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        this.form.requestSubmit(); // Submits the form via Turbo
+      }, 300); // Debounce the search input to avoid excessive requests
+    });
+  }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
   // Event delegation for dynamically added elements
   document.addEventListener('click', function(event) {
