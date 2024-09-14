@@ -1,29 +1,14 @@
 <div id="search-container">
   <%= form_with url: search_recipes_path, method: :get, class: "search-form", id: "recipe-search-form", data: { turbo_frame: "search_results" } do %>
     <%= text_field_tag :query, params[:query], placeholder: "Search recipes...", class: "search-input" %>
-  <%= link_to 'Clear Search', root_path, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
+    <%= link_to 'Clear Search', root_path, class: 'text-gray-800 hover:text-gray-600 ml-4' %>
   <% end %>
+</div>
 
 <div class="flex justify-end mb-4">
-    <%= link_to 'New Recipe', new_recipe_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4' %>
+  <%= link_to 'New Recipe', new_recipe_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4' %>
 </div>
 
-  <%= turbo_frame_tag "search_results" do %>
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  gap-4">
-      <% @recipes.each do |recipe| %>
-    <div class="rounded overflow-hidden shadow-lg flex flex-col mb-4">
-       <%= link_to recipe_path(recipe) do %>
-         <% if recipe.image.representable? %>
-        <%= image_tag recipe.processed_image_variants[:medium], loading: "eager", :class => "rounded-lg" %>
-         <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
-         <% else %>
-         <%= link_to image_tag('recipe_icon.png'), root_path, :class => "rounded-lg" %>
-        <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
-          <% end %>
-    </div>
-       <% end %>
-      <% end %>
-    </div>
-  <% end %>
-</div>
-  
+<%= turbo_frame_tag "search_results" do %>
+  <%= render partial: 'recipe_list' %>
+<% end %>

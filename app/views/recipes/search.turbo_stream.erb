@@ -1,19 +1,8 @@
-<%= turbo_stream.replace "search_results" do %>
-  <%= turbo_frame_tag "search_results" do %>
-    <% @recipes.each do |recipe| %>
-    <div class="rounded overflow-hidden shadow-lg flex flex-col mb-4">
-       <%= link_to recipe_path(recipe) do %>
-         <% if recipe.image.representable? %>
-        <%= image_tag recipe.processed_image_variants[:medium], :class => "rounded-lg" %>
-         <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
-         <% else %>
-         <%= link_to image_tag('recipe_icon.png'), root_path, :class => "rounded-lg" %>
-        <%= link_to recipe.name, recipe_path(recipe), class: 'text-center hover:underline mt-2' %>
-          <% end %>
-    </div>
-       <% end %>
-      <% end %>
-    </div>
+<%= turbo_frame_tag "search_results" do %>
+  <% if @recipes.any? %>
+    <%= render partial: 'recipe_list' %>
+  <% else %>
+    <p>No recipes found.</p>
   <% end %>
-  <% end %>
-<% end %>
+</%= turbo_frame_tag>
+

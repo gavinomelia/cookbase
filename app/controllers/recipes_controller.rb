@@ -1,32 +1,32 @@
 class RecipesController < ApplicationController
-require 'open-uri'
-require 'nokogiri'
-require 'json'
+  require 'open-uri'
+  require 'nokogiri'
+  require 'json'
 
   before_action :require_login, except: [:index, :show]
   before_action :set_recipe, only: [:show, :edit, :update, :scale, :destroy]
 
   # GET /recipes
   def index
-if logged_in?
-        @recipes = current_user.recipes.includes(image_attachment: :blob)
-        else
-          redirect_to :login 
-     end
+    if logged_in?
+      @recipes = current_user.recipes.includes(image_attachment: :blob)
+    else
+      redirect_to :login 
+    end
   end
 
 
   def search
-  if logged_in?
-    @recipes = if params[:query].present?
-    Recipe.where("name ILIKE ?", "%#{params[:query]}%")
-               else
-                 current_user.recipes
-               end
+    if logged_in?
+      @recipes = if params[:query].present?
+                   Recipe.where("name ILIKE ?", "%#{params[:query]}%")
+                 else
+                   current_user.recipes
+                 end
 
-    respond_to do |format|
-       format.turbo_stream # Handles Turbo request (text/vnd.turbo-stream.html)
-      format.html { render :index } # Fallback for regular HTML requests    
+      respond_to do |format|
+        format.turbo_stream # Handles Turbo request (text/vnd.turbo-stream.html)
+        format.html { render :index } # Fallback for regular HTML requests    
       end
     end
   end
@@ -43,12 +43,12 @@ if logged_in?
   end
 
   def create
-   @recipe = current_user.recipes.build(recipe_params)
+    @recipe = current_user.recipes.build(recipe_params)
 
-   if @recipe.save
+    if @recipe.save
       redirect_to @recipe, notice: 'Recipe was successfully created.'
     else
-       render :new
+      render :new
     end
   end
 
@@ -66,7 +66,7 @@ if logged_in?
     redirect_to root_path
   end
 
-  
+
   def scale
     scale_factor = params[:scale_factor].to_f
     @scaled_ingredients = @recipe.ingredients.map do |ingredient|
@@ -89,18 +89,18 @@ if logged_in?
     html = fetch_html(url)
     doc = Nokogiri::HTML(html)
     json_contents = parse_json_ld(doc)
-    
-      recipe_data = find_recipe_data(json_contents)
-      if recipe_data
-        recipe_attrs = extract_recipe_attributes(recipe_data)
 
-        @recipe = current_user.recipes.build(
-          name: recipe_attrs[:name],
-          directions: recipe_attrs[:directions],
-          url: url
-        )
+    recipe_data = find_recipe_data(json_contents)
+    if recipe_data
+      recipe_attrs = extract_recipe_attributes(recipe_data)
 
-       image_tempfile = attach_image(recipe_attrs[:image_url])
+      @recipe = current_user.recipes.build(
+        name: recipe_attrs[:name],
+        directions: recipe_attrs[:directions],
+        url: url
+      )
+
+      image_tempfile = attach_image(recipe_attrs[:image_url])
 
       recipe_attrs[:ingredients].each do |ingredient|
         @recipe.ingredients.build(name: ingredient)
@@ -117,51 +117,51 @@ if logged_in?
 
         render :new, alert: 'Failed to save the recipe.'
       end
-      else
-        redirect_to new_recipe_path, alert: "Failed to scrape recipe from URL."
-      end
+    else
+      redirect_to new_recipe_path, alert: "Failed to scrape recipe from URL."
+    end
   end
 
-private
-    def extract_recipe_attributes(recipe_data)
-      {
-        name: recipe_data["name"],
-        image_url: recipe_data["image"],
-        ingredients: recipe_data["recipeIngredient"],
-        directions: recipe_data["recipeInstructions"].map { |step| step["text"] }
-      }
+  private
+  def extract_recipe_attributes(recipe_data)
+    {
+      name: recipe_data["name"],
+      image_url: recipe_data["image"],
+      ingredients: recipe_data["recipeIngredient"],
+      directions: recipe_data["recipeInstructions"].map { |step| step["text"] }
+    }
+  end
+
+
+  def find_recipe_data(json_contents)
+    json_contents.each do |json_content|
+      recipe_data = case json_content
+                    when Hash
+                      if json_content["@graph"]
+                        json_content["@graph"].find { |item| item["@type"] == "Recipe" }
+                      elsif json_content["@type"] == "Recipe"
+                        json_content
+                      end
+                    when Array
+                      json_content.find { |item| item["@type"].include?("Recipe") }
+                    end
+      return recipe_data if recipe_data
     end
+    nil
+  end
 
+  def fetch_html(url)
+    URI.open(url).read
+  end
 
-    def find_recipe_data(json_contents)
-      json_contents.each do |json_content|
-        recipe_data = case json_content
-        when Hash
-          if json_content["@graph"]
-            json_content["@graph"].find { |item| item["@type"] == "Recipe" }
-          elsif json_content["@type"] == "Recipe"
-            json_content
-          end
-        when Array
-          json_content.find { |item| item["@type"].include?("Recipe") }
-        end
-        return recipe_data if recipe_data
-      end
-      nil
-    end
+  def attach_image(image_url)
+    return if image_url.blank?
 
-    def fetch_html(url)
-      URI.open(url).read
-    end
-
-    def attach_image(image_url)
-      return if image_url.blank?
-
-      image_url = image_url.first if image_url.is_a?(Array)
-      image_url = image_url["url"] if image_url.is_a?(Hash)
-      image_file = URI.parse(image_url).open
-      extension = File.extname(URI.parse(image_url).path)
-      file = Tempfile.new(['recipe_image', extension])
+    image_url = image_url.first if image_url.is_a?(Array)
+    image_url = image_url["url"] if image_url.is_a?(Hash)
+    image_file = URI.parse(image_url).open
+    extension = File.extname(URI.parse(image_url).path)
+    file = Tempfile.new(['recipe_image', extension])
 
     begin
       file.binmode
@@ -169,33 +169,33 @@ private
       file.rewind
 
       @recipe.image.attach(io: file, filename: File.basename(image_url))
-      
+
       file 
     end
-    rescue => e
-      Rails.logger.error "Failed to attach image: #{e.message}"
-      file.unlink if file
-    end
+  rescue => e
+    Rails.logger.error "Failed to attach image: #{e.message}"
+    file.unlink if file
+  end
 
-    def parse_json_ld(doc)
-      json_ld_scripts = doc.css('script[type="application/ld+json"]')
-      json_ld_scripts.map { |script| JSON.parse(script.text) }
-    end
+  def parse_json_ld(doc)
+    json_ld_scripts = doc.css('script[type="application/ld+json"]')
+    json_ld_scripts.map { |script| JSON.parse(script.text) }
+  end
 
-    def set_recipe
-      @recipe = Recipe.find(params[:id])
-    end
+  def set_recipe
+    @recipe = Recipe.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def recipe_params
-      params.require(:recipe).permit(:name, :directions, :image, :url, :notes, :tag_list, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
-    end
+  # Only allow a list of trusted parameters through.
+  def recipe_params
+    params.require(:recipe).permit(:name, :directions, :image, :url, :notes, :tag_list, ingredients_attributes: [:id, :name, :quantity, :scale, :_destroy])
+  end
 
-    # Ensure user is logged in before accessing recipes
-    def require_login
-      unless logged_in?
-        redirect_to login_path, alert: "Please log in to view your recipes."
-      end
+  # Ensure user is logged in before accessing recipes
+  def require_login
+    unless logged_in?
+      redirect_to login_path, alert: "Please log in to view your recipes."
     end
+  end
 end
 
