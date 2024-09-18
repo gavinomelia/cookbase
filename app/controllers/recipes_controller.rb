@@ -95,6 +95,7 @@ class RecipesController < ApplicationController
       recipe_attrs = extract_recipe_attributes(recipe_data)
 
       @recipe = current_user.recipes.build(
+        scraped_data: recipe_data,
         name: recipe_attrs[:name],
         directions: recipe_attrs[:directions],
         url: url
