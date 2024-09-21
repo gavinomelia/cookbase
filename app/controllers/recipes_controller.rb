@@ -19,7 +19,7 @@ class RecipesController < ApplicationController
   def search
     if logged_in?
       @recipes = if params[:query].present?
-                   Recipe.where("name ILIKE ?", "%#{params[:query]}%")
+                   current_user.recipes.where("name ILIKE ?", "%#{params[:query]}%")
                  else
                    current_user.recipes
                  end
