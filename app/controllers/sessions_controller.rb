@@ -8,8 +8,7 @@ class SessionsController < ApplicationController
     if user
       redirect_to root_path, notice: 'Logged in successfully.'
     else
-      flash.now[:alert] = 'Invalid email or password.'
-      render :new
+      redirect_to login_path, notice: 'Invalid email or password.'
     end
   end
 
