@@ -8,7 +8,7 @@ class Ingredient < ApplicationRecord
 
   def extract_quantity
    # Matches fractions, integers, and decimals at the start of a string.
-    regex = %r{\A(\d+/\d+|\d+(\.\d+)?|[¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])}
+    regex = %r{\A(\d+\s+\d+/\d+|\d+/\d+|\d+(\.\d+)?|[¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])}
 
     if match = self.name.match(regex)
       floatify(match[0])
