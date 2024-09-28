@@ -4,7 +4,6 @@ class Ingredient < ApplicationRecord
   validates :name, presence: true
   before_save :extract_quantity
 
-  private
 
   def extract_quantity
     # Matches fractions, integers, and decimals at the start of a string.
@@ -16,6 +15,8 @@ class Ingredient < ApplicationRecord
       self.quantity = 1
     end
   end
+
+  private
 
   def floatify(str)
     # Handle mixed numbers like "2 ½" or "2 1/2" or "2½"
