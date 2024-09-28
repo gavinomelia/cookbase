@@ -7,22 +7,33 @@ class Ingredient < ApplicationRecord
   private
 
   def extract_quantity
-   # Matches fractions, integers, and decimals at the start of a string.
-    regex = %r{\A(\d+\s+\d+/\d+|\d+/\d+|\d+(\.\d+)?|[¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])}
+    # Matches fractions, integers, and decimals at the start of a string.
+    regex = %r{\A(\d+\s+[¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]|\d+[/⁄∕⧸]\d+|\d+(\.\d+)?|[¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])}
 
-    if match = self.name.match(regex)
-      floatify(match[0])
-    else 
+    if match = self.name.strip.match(regex)
+      self.quantity = floatify(match[0])
+    else
       self.quantity = 1
     end
   end
 
   def floatify(str)
-    if fraction_to_float(str) != nil
-      self.quantity = fraction_to_float(str)
-    else
-      self.quantity = str.to_f
+    # Handle mixed numbers like "2 ½" or "2 1/2" or "2½"
+    if str.match?(/\d+\s?[¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/) # Matches mixed numbers with vulgar fractions
+      parts = str.split(/\s+/)
+      whole_number = parts[0].to_i
+      fraction_part = fraction_to_float(parts[1])
+      return whole_number + fraction_part if fraction_part
     end
+
+    # Handle fractions like "1/2" or "3/4"
+    if str.match?(%r{\A\d+[/⁄∕⧸]\d+\z})
+      numerator, denominator = str.split(%r{[/⁄∕⧸]}).map(&:to_f)
+      return numerator / denominator
+    end
+
+    # If it's just a single fraction or number, convert it directly
+    fraction_to_float(str) || str.to_f
   end
 
   def fraction_to_float(str)
@@ -46,5 +57,5 @@ class Ingredient < ApplicationRecord
 
     conversion[str]
   end
-
 end
+
