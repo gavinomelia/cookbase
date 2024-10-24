@@ -5,6 +5,10 @@
 @import "tailwindcss/utilities";
 
 /*
+ *= require select2
+*/
+
+/*
 
 @layer components {
   .btn-primary {

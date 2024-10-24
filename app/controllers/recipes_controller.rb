@@ -15,17 +15,22 @@ class RecipesController < ApplicationController
     end
   end
 
-
   def search
     if logged_in?
-      @recipes = if params[:query].present?
-                   current_user.recipes.where("name ILIKE ?", "%#{params[:query]}%")
-                 else
-                   current_user.recipes
-                 end
+      # Start with the user's recipes
+      @recipes = current_user.recipes
+
+      # Filter by tags if present
+      if params[:tags].present?
+        tags = params[:tags].reject(&:blank?) # Remove blank entries
+        @recipes = @recipes.tagged_with(tags) unless tags.empty?
+      end
+
+      # Filter by search query if present (within the selected tags)
+      @recipes = @recipes.where("name ILIKE ?", "%#{params[:query]}%") if params[:query].present?
 
       respond_to do |format|
-        format.turbo_stream # Handles Turbo request (text/vnd.turbo-stream.html)
+        format.turbo_stream # Handles Turbo request
         format.html { render :index } # Fallback for regular HTML requests    
       end
     end
