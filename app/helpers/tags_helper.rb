@@ -7,6 +7,9 @@ module TagsHelper
     "bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded",
     "bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded",
     "bg-pink-100 text-pink-800 text-sm font-medium px-3 py-1 rounded",
+    "bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded",
+    "bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded",
+    "bg-orange-100 text-orange-800 text-sm font-medium px-3 py-1 rounded"
   ]
 
   def tag_color(tag_name)
