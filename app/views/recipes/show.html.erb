@@ -66,9 +66,7 @@
 
   <div class="mb-4">
     <h3 class="text-xl font-bold mb-2">URL</h3>
-    <p>
-    <%= @recipe.url %>
-    </p>
+    <%= link_to @recipe.url, @recipe.url, class: 'underline' %>
   </div>
 
   <div class="flex justify-between mt-6">
