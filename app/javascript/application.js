@@ -31,9 +31,6 @@ document.addEventListener("turbo:load", function() {
         newTagItem.textContent = newTag;
         currentTagsList.appendChild(newTagItem);
 
-        // Optionally, you can update the recipe's tag_list parameter to include the new tag
-        // You might need to adjust this part to fit your form submission logic
-
         newTagInput.value = ''; // Clear the input field
       } else {
         alert('Please enter a tag.'); // Alert if the input is empty
