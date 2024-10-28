@@ -67,44 +67,46 @@
     </div>
   </nav>
 
-  <!-- Full-Screen Search Overlay -->
-  <div id="mobile-search-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-11/12 max-w-md">
-      <h2 class="text-lg font-semibold mb-4">Search Recipes</h2>
-      <%= form_with url: search_recipes_path, method: :get, class: "search-form", id: "recipe-search-form", data: { turbo_frame: "search_results" } do %>
-        <!-- Search Query -->
-        <%= text_field_tag :query, params[:query], placeholder: "Search recipes...", class: "search-input w-full border border-gray-300 rounded p-2 focus:ring focus:ring-cookblue-200 focus:outline-none" %>
-      <% end %>
-
-      <!-- Tags Input or Display -->
-      <div id="tag-container" class="mt-4">
-        <% if params[:tags].present? %>
-          <p>
-          <%= link_to "Clear All Tags", search_recipes_path, data: { turbo_frame: "search_results" } %>
-          </p>
+  <% if logged_in? %>
+    <!-- Full-Screen Search Overlay -->
+    <div id="mobile-search-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden flex items-center justify-center">
+      <div class="bg-white p-6 rounded-lg w-11/12 max-w-md">
+        <h2 class="text-lg font-semibold mb-4">Search Recipes</h2>
+        <%= form_with url: search_recipes_path, method: :get, class: "search-form", id: "recipe-search-form", data: { turbo_frame: "search_results" } do %>
+          <!-- Search Query -->
+          <%= text_field_tag :query, params[:query], placeholder: "Search recipes...", class: "search-input w-full border border-gray-300 rounded p-2 focus:ring focus:ring-cookblue-200 focus:outline-none" %>
         <% end %>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <h2 class="text-lg font-semibold text-gray-700">Tags</h2>
-           <% current_user.recipes.tag_counts_on(:tags).each do |tag| %>
-            <span class="<%= tag_color(tag.name) %> text-sm font-medium px-3 py-1 rounded">
-              <% if params[:tags]&.include?(tag.name) %>
-                <!-- Remove tag from filter -->
-                <%= link_to "(X) #{tag.name}", search_recipes_path(query: params[:query], tags: params[:tags] - [tag.name]) %>
-              <% else %>
-                <!-- Add tag to filter -->
-                <%= link_to tag.name, search_recipes_path(query: params[:query], tags: (params[:tags] || []) + [tag.name]) %>
-              <% end %>
-            </span>
+
+        <!-- Tags Input or Display -->
+        <div id="tag-container" class="mt-4">
+          <% if params[:tags].present? %>
+            <p>
+            <%= link_to "Clear All Tags", search_recipes_path, data: { turbo_frame: "search_results" } %>
+            </p>
           <% end %>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <h2 class="text-lg font-semibold text-gray-700">Tags</h2>
+            <% current_user.recipes.tag_counts_on(:tags).each do |tag| %>
+              <span class="<%= tag_color(tag.name) %> text-sm font-medium px-3 py-1 rounded">
+                <% if params[:tags]&.include?(tag.name) %>
+                  <!-- Remove tag from filter -->
+                  <%= link_to "(X) #{tag.name}", search_recipes_path(query: params[:query], tags: params[:tags] - [tag.name]) %>
+                <% else %>
+                  <!-- Add tag to filter -->
+                  <%= link_to tag.name, search_recipes_path(query: params[:query], tags: (params[:tags] || []) + [tag.name]) %>
+                <% end %>
+              </span>
+            <% end %>
+          </div>
         </div>
+
+
+        <button id="mobile-search-close" class="mt-4 px-4 py-2 bg-gray-800 text-white rounded-md">Close</button>
       </div>
-
-
-      <button id="mobile-search-close" class="mt-4 px-4 py-2 bg-gray-800 text-white rounded-md">Close</button>
     </div>
-  </div>
 
 
+  <% end %>
 
   <body class="bg-gray-100 sm:bg-white">
     <%= turbo_include_tags %>
