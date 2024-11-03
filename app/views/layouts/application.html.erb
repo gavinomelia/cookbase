@@ -25,14 +25,21 @@
     <!-- Logo container, centered on mobile, left-aligned on larger screens -->
     <div class="container mx-auto flex items-center justify-between">
       <div class="w-full flex justify-start">
-        <%= link_to image_tag('cookbase.svg', class: 'sm:w-32 sm:scale-150 md:w-40'), root_path %>
+        <%= link_to image_tag('cookbase.svg', class: 'mt-2 w-36 sm:w-40 md:w-48'), root_path %>
 
       </div>
       <button id="mobile-search-toggle" class="sm:hidden text-gray-800 focus:outline-none">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="w-8 h-8 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16.65 10.65A6.35 6.35 0 1010.65 16.65 6.35 6.35 0 0016.65 10.65z"></path>
         </svg>
       </button>
+      <!-- Hamburger Icon for Mobile -->
+      <button id="menu-toggle" class="sm:hidden text-gray-800 hover:text-gray-600 focus:outline-none ml-auto">
+        <svg class="w-8 h-8 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+
 
       <!-- Navigation Links for Desktop -->
       <div class="flex items-center space-x-4">
@@ -46,12 +53,6 @@
           <% end %>
         </div>
 
-        <!-- Hamburger Icon for Mobile -->
-        <button id="menu-toggle" class="sm:hidden text-gray-800 hover:text-gray-600 focus:outline-none ml-auto">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-          </svg>
-        </button>
       </div>
     </div>
 
@@ -67,46 +68,46 @@
     </div>
   </nav>
 
-      <% if logged_in? %>
-  <!-- Full-Screen Search Overlay -->
-  <div id="mobile-search-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-11/12 max-w-md">
-      <h2 class="text-lg font-semibold mb-4">Search Recipes</h2>
-      <%= form_with url: search_recipes_path, method: :get, class: "search-form", id: "recipe-search-form", data: { turbo_frame: "search_results" } do %>
-        <!-- Search Query -->
-        <%= text_field_tag :query, params[:query], placeholder: "Search recipes...", class: "search-input w-full border border-gray-300 rounded p-2 focus:ring focus:ring-cookblue-200 focus:outline-none" %>
-      <% end %>
-
-      <!-- Tags Input or Display -->
-      <div id="tag-container" class="mt-4">
-        <% if params[:tags].present? %>
-          <p>
-          <%= link_to "Clear All Tags", search_recipes_path, data: { turbo_frame: "search_results" } %>
-          </p>
+  <% if logged_in? %>
+    <!-- Full-Screen Search Overlay -->
+    <div id="mobile-search-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden flex items-center justify-center">
+      <div class="bg-white p-6 rounded-lg w-11/12 max-w-md">
+        <h2 class="text-lg font-semibold mb-4">Search Recipes</h2>
+        <%= form_with url: search_recipes_path, method: :get, class: "search-form", id: "recipe-search-form", data: { turbo_frame: "search_results" } do %>
+          <!-- Search Query -->
+          <%= text_field_tag :query, params[:query], placeholder: "Search recipes...", class: "search-input w-full border border-gray-300 rounded p-2 focus:ring focus:ring-cookblue-200 focus:outline-none" %>
         <% end %>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <h2 class="text-lg font-semibold text-gray-700">Tags</h2>
-           <% current_user.recipes.tag_counts_on(:tags).each do |tag| %>
-            <span class="<%= tag_color(tag.name) %> text-sm font-medium px-3 py-1 rounded">
-              <% if params[:tags]&.include?(tag.name) %>
-                <!-- Remove tag from filter -->
-                <%= link_to "(X) #{tag.name}", search_recipes_path(query: params[:query], tags: params[:tags] - [tag.name]) %>
-              <% else %>
-                <!-- Add tag to filter -->
-                <%= link_to tag.name, search_recipes_path(query: params[:query], tags: (params[:tags] || []) + [tag.name]) %>
-              <% end %>
-            </span>
+
+        <!-- Tags Input or Display -->
+        <div id="tag-container" class="mt-4">
+          <% if params[:tags].present? %>
+            <p>
+            <%= link_to "Clear All Tags", search_recipes_path, data: { turbo_frame: "search_results" } %>
+            </p>
           <% end %>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <h2 class="text-lg font-semibold text-gray-700">Tags</h2>
+            <% current_user.recipes.tag_counts_on(:tags).each do |tag| %>
+              <span class="<%= tag_color(tag.name) %> text-sm font-medium px-3 py-1 rounded">
+                <% if params[:tags]&.include?(tag.name) %>
+                  <!-- Remove tag from filter -->
+                  <%= link_to "(X) #{tag.name}", search_recipes_path(query: params[:query], tags: params[:tags] - [tag.name]) %>
+                <% else %>
+                  <!-- Add tag to filter -->
+                  <%= link_to tag.name, search_recipes_path(query: params[:query], tags: (params[:tags] || []) + [tag.name]) %>
+                <% end %>
+              </span>
+            <% end %>
+          </div>
         </div>
+
+
+        <button id="mobile-search-close" class="mt-4 px-4 py-2 bg-gray-800 text-white rounded-md">Close</button>
       </div>
-
-
-      <button id="mobile-search-close" class="mt-4 px-4 py-2 bg-gray-800 text-white rounded-md">Close</button>
     </div>
-  </div>
 
 
-      <% end %>
+  <% end %>
 
   <body class="bg-gray-100 sm:bg-white">
     <%= turbo_include_tags %>
