@@ -5,7 +5,7 @@
     <div class="flex justify-center items-center f-screen">
         <div class="w-full max-w-md flex flex-col items-center bg-white p-8 rounded shadow-lg">
             <!-- Text Login -->
-            <h1 class="text-center text-2xl font-bold text-gray-600 mb-6">LOGIN</h1>
+            <h1 class="text-center text-2xl font-bold text-gray-700 mb-6">LOGIN</h1>
             <%= form_with(url: login_path, local: true) do |form| %>
             <!-- Email Input -->
             <div class="w-full mb-6">
@@ -20,8 +20,8 @@
             <!-- Remember Input -->
             <div class="w-full flex flex-row justify-between items-center mb-6">
                 <div class="flex items-center gap-x-1">
-                    <input type="checkbox" name="remember" id="remember" class="w-4 h-4">
-                    <label for="remember" class="text-sm text-slate-400">Remember me</label>
+                    <%= form.check_box :remember, { id: "remember" }, true, false %>
+                    <%= form.label :remember, "Remember me", class: "text-sm text-slate-400" %>
                 </div>
                 <div>
                     <%= link_to 'Forgot?', new_password_reset_path,  class: "text-sm text-slate-400 hover:text-blue-500" %>
@@ -30,7 +30,7 @@
             </div>
             <!-- Button -->
             <div class="w-full mt-4">
-                <%= form.submit "Login", class: "py-4 bg-blue-400 w-full rounded text-blue-50 font-bold hover:bg-blue-700" %>
+                <%= form.submit "Login", class: "py-4 bg-cookblue-100 w-full rounded text-white font-bold hover:bg-cookblue-200 hover:text-gray-400" %>
             </div>
             <% end %>
             <br>
