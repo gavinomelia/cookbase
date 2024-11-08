@@ -8,17 +8,17 @@ class Recipe < ApplicationRecord
   validates :name, :directions, :user, presence: true
   validates :url, format: { with: URI::regexp(%w[http https]) }, allow_blank: true
 
-  after_commit :processed_image_variants, on: [:create, :update]
+  after_commit :preprocess_variants, on: [:create, :update], if: -> { image.attached? }
 
-  def processed_image_variants
-    return unless image.attached?  # Check if image is attached
-
+  private
+  def preprocess_variants
     {
       thumbnail: image.variant(resize_to_fill: [200, 200]).processed,
       medium: image.variant(resize_to_fill: [400, 400]).processed
     }
+  rescue ActiveStorage::FileNotFoundError => e
+    Rails.logger.error("Image processing failed for Recipe ##{id}: #{e.message}")
+    {}
   end
-
-  private
 end
 

@@ -2,11 +2,7 @@
   <% @recipes.each do |recipe| %>
     <div class="rounded overflow-hidden shadow-lg flex flex-col mb-4">
       <%= link_to recipe_path(recipe), data: { turbo_frame: "_top" } do %>
-        <% if recipe.image.representable? %>
-          <%= image_tag recipe.processed_image_variants[:medium], loading: "eager", class: "rounded-lg" %>
-        <% else %>
-          <%= image_tag 'recipe_icon.png', class: "rounded-lg" %>
-        <% end %>
+        <%= image_tag(recipe_image(recipe), loading: "eager", class: "rounded-lg") %>
         <p class="text-center hover:underline mt-2 mb-2"><%= recipe.name %></p>
       <% end %>
     </div>

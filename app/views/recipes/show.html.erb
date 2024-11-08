@@ -27,11 +27,9 @@
   </head>
 
   <body>
-    <% if @recipe.image.attached? %>
-      <div class="flex justify-center items-center sm:mx-4 md:mx-0 mt-6 mb-4">
-        <%= image_tag @recipe.image.variant(resize_to_fill: [400, 400]), class: "rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md" %>
-      </div>
-    <% end %>
+    <div class="flex justify-center items-center sm:mx-4 md:mx-0 mt-6 mb-4">
+      <%= image_tag(recipe_image(@recipe), loading: "eager", class: "rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md") %>
+    </div>
 
     <h2 class="text-center text-4xl font-semibold text-gray-800 mb-6 leading-snug">
       <%= @recipe.name %>
