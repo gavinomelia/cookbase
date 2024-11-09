@@ -117,15 +117,15 @@
           <div class="mb-6">
             <h3 class="text-3xl text-gray-700 font-semibold mb-4 text-center">Ingredients</h3>
             <ul class="list-none">
-             <% @recipe.ingredients.each_with_index do |ingredient, index| %>
-            <li 
-              class="text-gray-800 py-2 px-4 font-semibold text-sm 
-              <%= index.even? ? 'bg-cookblue-50' : 'bg-gray-50' %>
-              hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
-            >
-              <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> <%= ingredient.name %>
-            </li>
-          <% end %>
+              <% @recipe.ingredients.each_with_index do |ingredient, index| %>
+                <li 
+                class="text-gray-800 py-2 px-4 font-semibold text-sm 
+                <%= index.even? ? 'bg-cookblue-50' : 'bg-gray-50' %>
+                hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
+                >
+                <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> <%= ingredient.name %>
+                </li>
+              <% end %>
             </ul>
           </div>
         <% end %>
@@ -162,35 +162,35 @@
           <%= link_to @recipe.url, @recipe.url, class: 'underline' %>
         </div>
 
-        <div class="flex justify-between mt-6">
-          <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'bg-cookblue-100 hover:bg-cookblue-200 text-white font-bold py-2 px-4 rounded' %>
-          <%= link_to 'Back', recipes_path, class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded' %>
-          <%= link_to 'Delete', recipe_path(@recipe), data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this recipe? Deleting a recipe cannot be undone.' }, method: :delete, class: 'bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded' %>
-        </div>
+        <div class="flex justify-between mt-6 space-x-4">
+          <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'bg-cookblue-100 hover:bg-cookblue-200 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105' %>
+          <%= link_to 'Back', recipes_path, class: 'bg-gray-600 hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105' %>
+          <%= link_to 'Delete', recipe_path(@recipe), data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this recipe? Deleting a recipe cannot be undone.' }, method: :delete, class: 'bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105' %>
+        </div>      
       </div>
 
     </div>
 
     <!-- Desktop Layout -->
     <div class="hidden sm:flex max-w-6xl mx-auto gap-8">
-        <aside class="sticky top-8 w-2/5 bg-white shadow-lg p-5 rounded-lg shrink-0">
-    <%= turbo_frame_tag "desktop_scaled_ingredients" do %>
-      <div class="mb-4">
-        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Ingredients</h3>
-        <ul class="rounded-lg overflow-hidden border border-gray-200">
-          <% @recipe.ingredients.each_with_index do |ingredient, index| %>
-            <li 
-              class="text-gray-800 py-3 px-4 text-sm 
-                     <%= index.even? ? 'bg-cookblue-50' : 'bg-white' %> 
-                     hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
-            >
-              <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> <%= ingredient.name %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
-  </aside>
+      <aside class="sticky top-8 w-2/5 bg-white shadow-lg p-5 rounded-lg shrink-0">
+        <%= turbo_frame_tag "desktop_scaled_ingredients" do %>
+          <div class="mb-4">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Ingredients</h3>
+            <ul class="rounded-lg overflow-hidden border border-gray-200">
+              <% @recipe.ingredients.each_with_index do |ingredient, index| %>
+                <li 
+                class="text-gray-800 py-3 px-4 text-sm 
+                <%= index.even? ? 'bg-cookblue-50' : 'bg-white' %> 
+                hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
+                >
+                <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> <%= ingredient.name %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </aside>
 
       <main class="w-3/5">
         <div id="directions" class="bg-white shadow-md p-6 rounded-md">
@@ -224,6 +224,12 @@
         </div>
       </main>
     </div> 
+
+    <div class="hidden sm:flex justify-between mx-6 mt-6 space-x-4">
+      <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'bg-cookblue-100 hover:bg-cookblue-200 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105' %>
+      <%= link_to 'Back', recipes_path, class: 'bg-gray-600 hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105' %>
+      <%= link_to 'Delete', recipe_path(@recipe), data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this recipe? Deleting a recipe cannot be undone.' }, method: :delete, class: 'bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105' %>
+    </div>
 
     <script>
       // Tab Switching
