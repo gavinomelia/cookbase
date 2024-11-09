@@ -1,28 +1,46 @@
 <%= turbo_stream.replace "mobile_scaled_ingredients" do %>
-  <div id="mobile_scaled_ingredients">
-  <div class="mb-6 px-4 sm:px-6 lg:px-8">
-            <h3 class="text-3xl text-gray-700 font-semibold mb-4">Ingredients</h3>
-            <ul class="list-disc list-inside space-y-2">
-    <% @scaled_ingredients.each do |ingredient| %>
-      <p id="ingredient_<%= ingredient[:id] %>">
-        <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> - <%= ingredient[:name] %>
-        </p>
-<li class="flex items-center">
-                  <span class="text-gray-700 font-medium">
-                    <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %>  - <%= ingredient[:name] %>
-                  </span>
-                </li>
-
-    <% end %>
+  <div id="mobile_scaled_ingredients" class="mb-6">
+    <h3 class="text-3xl text-gray-700 font-semibold mb-4 text-center">Ingredients</h3>
+    <ul class="list-none">
+      <% @scaled_ingredients.each_with_index do |ingredient, index| %>
+        <li 
+          class="text-gray-800 py-2 px-4 font-semibold text-sm 
+          <%= index.even? ? 'bg-cookblue-50' : 'bg-gray-50' %>
+          hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
+        >
+          <span class="text-cookblue-600 font-bold">
+            <%= format_quantity(ingredient[:scaled_quantity]) %>
+          </span>
+          <span class="text-gray-500 line-through ml-2">
+            <%= format_quantity(ingredient[:original_quantity]) %>
+          </span> 
+          <%= ingredient[:name] %>
+        </li>
+      <% end %>
+    </ul>
   </div>
 <% end %>
 
 <%= turbo_stream.replace "desktop_scaled_ingredients" do %>
-  <div id="desktop_scaled_ingredients">
-    <% @scaled_ingredients.each do |ingredient| %>
-      <p id="ingredient_<%= ingredient[:id] %>">
-        <%= number_with_precision(ingredient[:scaled_quantity], precision: 2) %> - <%= ingredient[:name] %>
-      </p>
-    <% end %>
+  <div id="desktop_scaled_ingredients" class="mb-4">
+    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Ingredients</h3>
+    <ul class="rounded-lg overflow-hidden border border-gray-200">
+      <% @scaled_ingredients.each_with_index do |ingredient, index| %>
+        <li 
+          class="text-gray-800 py-3 px-4 text-sm 
+                 <%= index.even? ? 'bg-cookblue-50' : 'bg-white' %> 
+                 hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
+        >
+          <span class="text-cookblue-600 font-bold">
+            <%= format_quantity(ingredient[:scaled_quantity]) %>
+          </span>
+          <span class="text-gray-500 line-through ml-2">
+            <%= format_quantity(ingredient[:original_quantity]) %>
+          </span> 
+          <%= ingredient[:name] %>
+        </li>
+      <% end %>
+    </ul>
   </div>
 <% end %>
+

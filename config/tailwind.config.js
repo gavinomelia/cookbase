@@ -12,6 +12,8 @@ module.exports = {
     extend: {
       colors: {
         cookblue: {
+          50:  '#e3eff5',
+          75: '#b6cde2',
           100: '#90b7cc',
           200: '#82a1b2',
         },
