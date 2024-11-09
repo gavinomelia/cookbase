@@ -111,7 +111,7 @@
 
   <body class="bg-gray-100 sm:bg-white">
     <%= turbo_include_tags %>
-    <div class="<%= params[:controller] == 'recipes' && (params[:action] == 'index' || params[:action] == 'search') ? 'w-full' : 'container mx-auto' %>">
+    <div class="<%= params[:controller] == 'recipes' && (params[:action] == 'index' || params[:action] == 'search') ? 'w-full' : 'container mx-auto mb-24' %>">
       <%= yield %>
     </div>
   </body>
