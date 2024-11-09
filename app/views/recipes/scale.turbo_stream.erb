@@ -8,12 +8,9 @@
           <%= index.even? ? 'bg-cookblue-50' : 'bg-gray-50' %>
           hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
         >
-          <span class="text-cookblue-600 font-bold">
+          <span class="text-gray-600 text-md font-bold">
             <%= format_quantity(ingredient[:scaled_quantity]) %>
           </span>
-          <span class="text-gray-500 line-through ml-2">
-            <%= format_quantity(ingredient[:original_quantity]) %>
-          </span> 
           <%= ingredient[:name] %>
         </li>
       <% end %>
@@ -31,12 +28,9 @@
                  <%= index.even? ? 'bg-cookblue-50' : 'bg-white' %> 
                  hover:bg-cookblue-100 hover:bg-opacity-50 transition-colors"
         >
-          <span class="text-cookblue-600 font-bold">
+          <span class="text-gray-600 text-md font-bold">
             <%= format_quantity(ingredient[:scaled_quantity]) %>
           </span>
-          <span class="text-gray-500 line-through ml-2">
-            <%= format_quantity(ingredient[:original_quantity]) %>
-          </span> 
           <%= ingredient[:name] %>
         </li>
       <% end %>
