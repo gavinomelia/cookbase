@@ -1,80 +1,116 @@
-<!-- Form for scraping a recipe -->
-<%= form_with(url: scrape_recipes_path, method: :post, local: true) do |form| %>
-  <div class="mb-4">
-    <%= form.label :scrape_url, "Scrape Recipe URL", class: "block text-gray-700 text-sm font-bold mb-2" %>
-    <%= form.text_field :scrape_url, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
-  </div>
-  <div class="mt-4">
-    <%= form.submit "Scrape Recipe", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-  </div>
-<% end %>
-
-<!-- Form for creating/editing a recipe -->
-<div class="container mt-4">
-
-  <%= form_with(model: @recipe, local: true) do |form| %>
-    <div class="mb-4 field">
-      <%= form.label :image, class: "block text-gray-700 text-sm font-bold mb-2" %>
-      <%= form.file_field :image %>
+<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+  <!-- Scrape Recipe Form -->
+  <%= form_with(url: scrape_recipes_path, method: :post, local: true) do |form| %>
+    <div class="mb-6">
+      <%= form.text_field :scrape_url, placeholder: "Enter a recipe URL to scrape", class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" %>
     </div>
-
-    <div class="mb-4">
-      <%= form.label :name, class: "block text-gray-700 text-sm font-bold mb-2" %>
-      <%= form.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <div class="text-center">
+      <%= form.submit "Scrape Recipe", class: "bg-cookblue-100 hover:bg-cookblue-200 text-white font-semibold py-3 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105" %>
     </div>
-    <div class="mb-4">
-      <%= form.label :directions, "Directions", class: "block text-gray-700 text-sm font-bold mb-2" %>
-      <%= form.text_area :directions, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", rows: 6, required: true %>
-    </div>
-
-<%= form.label :tag_list, "Current Tags" %>
-<ul>
-  <% @recipe.tag_list.each do |tag| %>
-    <li><%= tag %></li>
   <% end %>
-</ul>
+  <hr class="mt-6">
 
-  <div class="mb-4">
-    <%= form.label :tag_list, "Tags (comma separated)" %>
-    <%= form.text_field :tag_list, value: @recipe.tag_list.join(", ") %>
-  </div>
+  <!-- Edit Recipe Form -->
+    <!-- Image dropbox --->
+  <%= form_with(model: @recipe, local: true) do |form| %>
+<div class="flex justify-center items-center sm:mx-4 md:mx-0 mt-6 mb-4">
+  
+  <label for="dropzone-file" class="relative flex items-center justify-center w-full max-w-md h-64 shadow-md rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 group">    
 
-      <div class="mb-4">
-        <%= form.label :url, class: "block text-gray-700 text-sm font-bold mb-2"  %>
-        <%= form.text_field :url, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
-      </div>
+  <%= image_tag(recipe_image(recipe), 
+    id: "uploaded-image-preview",
+    loading: "eager", 
+    class: "absolute inset-0 w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-20 transition-opacity"
+  ) %>
+ 
+    <div class="flex flex-col items-center justify-center pt-5 pb-6 z-10 opacity-100 group-hover:opacity-100 transition-opacity">
+      <svg class="w-8 h-8 mb-4 text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+      </svg>
+      <p class="mb-2 text-sm text-gray-200">
+        <span class="font-semibold">Click to upload</span>
+      </p>
+      <p class="text-xs text-gray-200">SVG, PNG, JPG, or JPEG </p>
+    </div>
+  </label>
 
-      <h3 class="text-lg font-bold mb-2">Ingredients</h3>
-      <div id="ingredients" class="space-y-4">
+  <!-- Hidden file input -->
+  <%= form.file_field :image, id: 'dropzone-file', accept: 'image/svg+xml, image/png, image/jpg, image/jpeg', class: 'hidden', onchange: 'previewImage(event)' %>
+</div>
+    
+    <!-- Recipe Name -->
+    <div class="mb-6">
+      <%= form.label :name, "Recipe Name", class: "block text-gray-800 text-lg font-medium mb-2" %>
+      <%= form.text_field :name, class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+    </div>
+
+ <!-- Ingredients -->
+    <div class="mb-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Ingredients</h3>
+      <div id="ingredients" class="space-y-4 p-4 rounded-lg">
         <%= form.fields_for :ingredients do |f| %>
           <div class="ingredient-fields flex items-center space-x-2">
-            <%= f.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "Ingredient" %>
+            <%= f.text_field :name, class: "flex-grow border border-gray-300 rounded-lg p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400", placeholder: "Ingredient" %>
             <%= link_to "Remove", '#', class: "remove_ingredient text-red-500 hover:text-red-700" %>
             <%= f.hidden_field :_destroy %>
           </div>
         <% end %>
       </div>
-      <div class="flex space-y-50">
-        <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded mt-3" %>
+      <div class="mt-4 text-center">
+        <%= link_to "Add Ingredient", "#", id: "add_ingredient", class: "bg-cookblue-100 hover:bg-cookblue-200 text-white font-semibold py-3 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105" %>
       </div>
-
-      <div class="mt-4">
-        <h3 class="text-lg font-bold mb-2">Notes</h3>
-        <%= form.text_area :notes, class: "w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none", rows: 5, placeholder: "Enter your notes here..." %>
-      </div>
-
-
-      <div class="mt-4 mb-4">
-        <%= form.submit "Save Recipe", class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
-      </div>
-    <% end %>
     </div>
 
-    <!-- Ingredient Template (Hidden) -->
-    <template id="ingredient_template">
-      <div class="ingredient-fields flex items-center space-x-2">
-        <input type="text" name="recipe[ingredients_attributes][NEW_RECORD][name]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Ingredient">
-        <a href="#" class="remove_ingredient text-red-500 hover:text-red-700">Remove</a>
-        <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
-      </div>
-    </template>
+
+    <!-- Directions -->
+    <div class="mb-6">
+      <%= form.label :directions, "Directions", class: "block text-gray-800 text-lg font-medium mb-2" %>
+      <%= form.text_area :directions, class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400", rows: 6 %>
+    </div>
+
+    <!-- Tags -->
+    <div class="mb-6">
+      <%= form.label :tag_list, "Tags (comma separated)", class: "block text-gray-800 text-lg font-medium mb-2" %>
+      <%= form.text_field :tag_list, value: @recipe.tag_list.join(", "), class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+    </div>
+
+   
+    <!-- Notes -->
+    <div class="mb-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Notes</h3>
+      <%= form.text_area :notes, class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none", rows: 4, placeholder: "Add your notes here..." %>
+    </div>
+
+    <!-- Save Button -->
+    <div class="text-right">
+      <%= form.submit "Save Recipe", class: "bg-cookblue-100 hover:bg-cookblue-200 text-white font-semibold py-3 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105" %>
+    </div>
+  <% end %>
+</div>
+
+<!-- Ingredient Template -->
+<template id="ingredient_template">
+  <div class="ingredient-fields flex items-center space-x-2">
+    <input type="text" name="recipe[ingredients_attributes][NEW_RECORD][name]" class="flex-grow border border-gray-300 rounded-lg p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Ingredient">
+    <a href="#" class="remove_ingredient text-red-500 hover:text-red-700">Remove</a>
+    <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
+  </div>
+</template>
+
+<script>
+function previewImage(event) {
+  const fileInput = event.target;
+  const file = fileInput.files[0]; // Get the uploaded file
+
+  if (file) {
+    const reader = new FileReader(); // Create a FileReader to read the file
+
+    reader.onload = function (e) {
+      const preview = document.getElementById('uploaded-image-preview');
+      preview.src = e.target.result; // Update the image source dynamically
+    };
+
+    reader.readAsDataURL(file); // Read the file as a data URL
+  }
+}
+</script>
