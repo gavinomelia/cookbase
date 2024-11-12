@@ -96,21 +96,3 @@
     <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
   </div>
 </template>
-
-<script>
-function previewImage(event) {
-  const fileInput = event.target;
-  const file = fileInput.files[0]; // Get the uploaded file
-
-  if (file) {
-    const reader = new FileReader(); // Create a FileReader to read the file
-
-    reader.onload = function (e) {
-      const preview = document.getElementById('uploaded-image-preview');
-      preview.src = e.target.result; // Update the image source dynamically
-    };
-
-    reader.readAsDataURL(file); // Read the file as a data URL
-  }
-}
-</script>

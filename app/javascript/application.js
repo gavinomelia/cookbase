@@ -1,3 +1,8 @@
+// Import custom JavaScript files
+import("image_preview").then(module => {
+  const previewImage = module.previewImage;
+}); // Your custom JavaScript file for image preview functionality
+
 // Instant Search Functionality
 document.addEventListener("turbo:load", function() {
   const searchInput = document.querySelector(".search-input");
