@@ -19,6 +19,6 @@ Rails.application.routes.draw do
   end
 end
   # Root route
-  root "recipes#index"
+  root "pages#index"
 end
 

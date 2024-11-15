@@ -1,0 +1,68 @@
+<div class="relative min-h-screen bg-white text-gray-900">
+  <!-- Hero Section with Split Screen -->
+  <section class="h-screen flex items-center justify-between px-6 py-20 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-50">
+    <div class="w-full md:w-1/2 text-center md:text-left">
+      <h1 class="text-5xl font-extrabold leading-tight mb-4 text-gray-700">
+        Welcome to <span class="text-cookblue-100">Cookbase</span>
+      </h1>
+      <p class="text-xl mb-8 text-gray-700 max-w-xl mx-auto md:mx-0">
+      Your digital cookbook, where recipes are organized, easily accessible, and ready to be discovered. Save and share your favorite meals in a few simple clicks.
+      </p>
+
+      <%= link_to 'Start Cooking Now', new_user_path, class: "bg-cookblue-200 hover:bg-cookblue-100 text-white font-semibold py-4 px-8 rounded-full text-lg transition duration-300 ease-in-out shadow-lg transform hover:scale-105" %>
+    </div>
+
+    <!-- Screenshot of App -->
+    <div class="hidden md:block w-full md:w-3/4">
+      <img src="<%= asset_path('screenshot_3.png') %>" alt="CookBase App Screenshot" class="rounded-lg shadow-2xl max-w-full">
+    </div>
+  </section>
+</div>
+
+
+<div class="h-screen">
+  <!-- Feature 1 -->
+  <section id="features" class="h-screen flex flex-col md:flex-row items-center bg-white snap-center">
+    <div class="w-full md:w-1/2 p-8">
+      <h2 class="text-3xl font-bold text-cookblue-200">Easy Recipe Scraping</h2>
+      <p class="text-gray-600 mt-4">Automatically extract recipes from your favorite websites. <br> Scraping is easy. Just copy the url and paste it into Cookbase.</p>
+    </div>
+    <div class="w-full md:w-1/2 flex justify-center p-8">
+      <img src="<%= asset_path('screenshot_2.png') %>" alt="Feature 1 Screenshot" class="rounded-lg shadow-lg max-w-full scale-125">
+    </div>
+  </section>
+
+  <!-- Feature 2 -->
+  <section class="h-screen flex flex-col md:flex-row items-center bg-gray-50 snap-center">
+    <div class="w-full md:w-1/2 flex justify-center p-8">
+      <img src="<%= asset_path('screenshot_1.png') %>" alt="Feature 2 Screenshot" class="rounded-lg shadow-lg max-w-full scale-125">
+    </div>
+    <div class="w-full md:w-1/2 p-8 mx-4">
+      <h2 class="text-3xl font-bold text-cookblue-200">Organized and Searchable Recipes</h2>
+      <p class="text-gray-600 mt-4">Tag, search, and categorize recipes effortlessly.</p>
+    </div>
+  </section>
+
+  <!-- Feature 3 -->
+  <section class="h-screen flex flex-col md:flex-row items-center bg-white snap-center">
+    <div class="w-full md:w-1/2 p-8">
+      <h2 class="text-3xl font-bold text-cookblue-200">No Ads. No Stories. Just Recipes.</h2>
+      <p class="text-gray-600 mt-4">Cookbase shows you just the information you need: ingredients <br> and directions.</p>
+    </div>
+    <div class="w-full md:w-1/2 flex justify-center p-8">
+      <img src="<%= asset_path('screenshot_4.png') %>" alt="Feature 3 Screenshot" class="rounded-lg shadow-lg max-w-full scale-125">
+    </div>
+  </section>
+  <!-- Call to Action Section -->
+  <div class="py-16 bg-slate-100 text-center text-gray-700">
+    <h2 class="text-3xl font-bold mb-4">Ready to get started?</h2>
+    <p class="text-lg mb-8">Sign up and start adding your favorite recipes today!</p>
+    <%= link_to 'Sign Up Now', new_user_path, class: "bg-white text-cookblue-200 font-semibold py-3 px-6 rounded-lg text-lg transition duration-300 hover:bg-gray-200" %>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="bg-sgray text-slate-300 text-sm text-center py-8">
+    <p>&copy; <%= Time.now.year %> Cookbase. All rights reserved.</p>
+  </div>
+</div>
+
