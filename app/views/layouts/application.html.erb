@@ -8,7 +8,6 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %> 
     <%= javascript_importmap_tags %>    
-    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload'  %>
   </head>
   <% flash.each do |type, msg| %>
     <div id="flash-<%= type %>" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative pt-2" role="alert">
@@ -117,44 +116,3 @@
     </div>
   </body>
 </html>
-
-<script>
-  document.addEventListener("turbo:load", function() {
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-    const mobileSearchOverlay = document.getElementById('mobile-search-overlay');
-    const mobileSearchClose = document.getElementById('mobile-search-close');
-    let menuInitialized = false; // Flag to avoid re-initializing
-
-    // Initialize mobile menu functionality
-    if (!menuInitialized && menuToggle && mobileMenu) {
-      menuToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
-      menuInitialized = true; // Set the flag to true
-    }
-
-    // Initialize mobile search functionality
-    if (mobileSearchToggle) {
-      mobileSearchToggle.onclick = function() {
-        mobileSearchOverlay.classList.toggle('hidden');
-      };
-    }
-
-    if (mobileSearchClose) {
-      mobileSearchClose.onclick = function() {
-        mobileSearchOverlay.classList.add('hidden');
-      };
-    }
-
-    if (mobileSearchOverlay) {
-      mobileSearchOverlay.onclick = function(event) {
-        if (event.target === this) {
-          this.classList.add('hidden');
-        }
-      };
-    }
-  });
-</script>
-

@@ -11,32 +11,27 @@
   <hr class="mt-6">
 
   <!-- Edit Recipe Form -->
-    <!-- Image dropbox --->
   <%= form_with(model: @recipe, local: true) do |form| %>
-<div class="flex justify-center items-center sm:mx-4 md:mx-0 mt-6 mb-4">
-  
-  <label for="dropzone-file" class="relative flex items-center justify-center w-full max-w-md h-64 shadow-md rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 group">    
-
-  <%= image_tag(recipe_image(recipe), 
-    id: "uploaded-image-preview",
-    loading: "eager", 
-    class: "absolute inset-0 w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-20 transition-opacity"
-  ) %>
- 
-    <div class="flex flex-col items-center justify-center pt-5 pb-6 z-10 opacity-100 group-hover:opacity-100 transition-opacity">
-      <svg class="w-8 h-8 mb-4 text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-      </svg>
-      <p class="mb-2 text-sm text-gray-200">
-        <span class="font-semibold">Click to upload</span>
-      </p>
-      <p class="text-xs text-gray-200">SVG, PNG, JPG, or JPEG </p>
+    <div class="flex justify-center items-center sm:mx-4 md:mx-0 mt-6 mb-4">
+      <label for="dropzone-file" class="relative flex items-center justify-center w-full max-w-md h-64 shadow-md rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 group">    
+        <%= image_tag(recipe_image(recipe), 
+          id: "uploaded-image-preview",
+          loading: "eager", 
+          class: "absolute inset-0 w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-20 transition-opacity"
+        ) %>
+        <div class="flex flex-col items-center justify-center pt-5 pb-6 z-10 opacity-100 group-hover:opacity-100 transition-opacity">
+          <svg class="w-8 h-8 mb-4 text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+          </svg>
+          <p class="mb-2 text-sm text-gray-200">
+            <span class="font-semibold">Click to upload</span>
+          </p>
+          <p class="text-xs text-gray-200">SVG, PNG, JPG, or JPEG </p>
+        </div>
+      </label>
+      <!-- Hidden file input -->
+      <%= form.file_field :image, id: 'dropzone-file', accept: 'image/svg+xml, image/png, image/jpg, image/jpeg', class: 'hidden', onchange: 'previewImage(event)' %>
     </div>
-  </label>
-
-  <!-- Hidden file input -->
-  <%= form.file_field :image, id: 'dropzone-file', accept: 'image/svg+xml, image/png, image/jpg, image/jpeg', class: 'hidden', onchange: 'previewImage(event)' %>
-</div>
     
     <!-- Recipe Name -->
     <div class="mb-6">
@@ -44,10 +39,11 @@
       <%= form.text_field :name, class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" %>
     </div>
 
- <!-- Ingredients -->
+    <!-- Ingredients -->
     <div class="mb-6">
       <h3 class="text-lg font-bold text-gray-800 mb-4">Ingredients</h3>
       <div id="ingredients" class="space-y-4 p-4 rounded-lg">
+        <!-- Preexisting ingredients (if any) -->
         <%= form.fields_for :ingredients do |f| %>
           <div class="ingredient-fields flex items-center space-x-2">
             <%= f.text_field :name, class: "flex-grow border border-gray-300 rounded-lg p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400", placeholder: "Ingredient" %>
@@ -61,7 +57,6 @@
       </div>
     </div>
 
-
     <!-- Directions -->
     <div class="mb-6">
       <%= form.label :directions, "Directions", class: "block text-gray-800 text-lg font-medium mb-2" %>
@@ -74,7 +69,6 @@
       <%= form.text_field :tag_list, value: @recipe.tag_list.join(", "), class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" %>
     </div>
 
-   
     <!-- Notes -->
     <div class="mb-6">
       <h3 class="text-lg font-bold text-gray-800 mb-4">Notes</h3>
@@ -96,3 +90,4 @@
     <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
   </div>
 </template>
+
