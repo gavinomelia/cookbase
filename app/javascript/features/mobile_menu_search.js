@@ -1,36 +1,33 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const menuToggle = document.getElementById('menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-  const mobileSearchOverlay = document.getElementById('mobile-search-overlay');
-  const mobileSearchClose = document.getElementById('mobile-search-close');
-  let menuInitialized = false; // Flag to avoid re-initializing
+document.addEventListener("DOMContentLoaded", function () {
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const mobileSearchToggle = document.getElementById("mobile-search-toggle");
+  const mobileSearchOverlay = document.getElementById("mobile-search-overlay");
+  const mobileSearchClose = document.getElementById("mobile-search-close");
 
-  // Initialize mobile menu functionality
-  if (!menuInitialized && menuToggle && mobileMenu) {
-    menuToggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
+  // Mobile Menu Toggle
+  if (menuToggle && mobileMenu) {
+    menuToggle.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
     });
-    menuInitialized = true; // Set the flag to true
   }
 
-  // Initialize mobile search functionality
-  if (mobileSearchToggle) {
-    mobileSearchToggle.onclick = function() {
-      mobileSearchOverlay.classList.toggle('hidden');
+  // Mobile Search Overlay Toggle
+  if (mobileSearchToggle && mobileSearchOverlay) {
+    mobileSearchToggle.onclick = () => {
+      mobileSearchOverlay.classList.toggle("hidden");
     };
   }
 
-  if (mobileSearchClose) {
-    mobileSearchClose.onclick = function() {
-      mobileSearchOverlay.classList.add('hidden');
+  // Close Mobile Search Overlay
+  if (mobileSearchClose && mobileSearchOverlay) {
+    mobileSearchClose.onclick = () => {
+      mobileSearchOverlay.classList.add("hidden");
     };
-  }
 
-  if (mobileSearchOverlay) {
-    mobileSearchOverlay.onclick = function(event) {
-      if (event.target === this) {
-        this.classList.add('hidden');
+    mobileSearchOverlay.onclick = (event) => {
+      if (event.target === mobileSearchOverlay) {
+        mobileSearchOverlay.classList.add("hidden");
       }
     };
   }

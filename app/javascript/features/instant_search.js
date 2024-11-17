@@ -1,30 +1,34 @@
 document.addEventListener("turbo:load", function () {
-  const searchInput = document.querySelector(".search-input");
-  const tagSelect = document.getElementById("tag-select");
+  const searchInputs = document.querySelectorAll(".search-input"); // Handle both mobile and desktop inputs
+  const tagSelects = document.querySelectorAll(".tag-select"); // Handle tag selection for both views
 
-  // Handle tag selection changes
-  if (tagSelect) {
-    tagSelect.addEventListener("change", function () {
-      if (this.form) {
-        this.form.requestSubmit(); // Submits the form via Turbo
-      } else {
-        console.error("Form not found for tag select.");
-      }
-    });
-  }
-
-  // Handle instant search
-  if (searchInput) {
-    searchInput.addEventListener("input", function () {
-      clearTimeout(this.searchTimeout);
-      this.searchTimeout = setTimeout(() => {
+  // Handle Tag Selection
+  tagSelects.forEach((tagSelect) => {
+    if (tagSelect) {
+      tagSelect.addEventListener("change", function () {
         if (this.form) {
           this.form.requestSubmit(); // Submits the form via Turbo
         } else {
-          console.error("Form not found for search input.");
+          console.error("Form not found for tag select.");
         }
-      }, 300); // Debounce the search input
-    });
-  }
+      });
+    }
+  });
+
+  // Handle Instant Search Input
+  searchInputs.forEach((searchInput) => {
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+          if (this.form) {
+            this.form.requestSubmit(); // Submits the form via Turbo
+          } else {
+            console.error("Form not found for search input.");
+          }
+        }, 300); // Debounce to avoid rapid requests
+      });
+    }
+  });
 });
 
