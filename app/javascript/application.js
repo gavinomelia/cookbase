@@ -6,5 +6,5 @@ import "./features/tags";
 import "./features/ingredients";
 import "./features/image_preview";
 import "./features/tabs";
-import './features/mobile_menu_search';
-
+import "./features/mobile_menu_search";
+import "./features/update_scale";
