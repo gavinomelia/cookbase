@@ -7,9 +7,5 @@ pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin "bootstrap" # @5.3.3
 pin "@popperjs/core", to: "@popperjs--core.js" # @2.11.8
-pin "features/instant_search"
-pin "features/tags"
-pin "features/ingredients"
-pin "features/image_preview"
-pin "features/mobile_menu_search"
-pin "features/update_scale"
+pin_all_from "app/javascript/features", under: "features"
+
