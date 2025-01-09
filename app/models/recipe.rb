@@ -10,6 +10,16 @@ class Recipe < ApplicationRecord
 
   after_commit :preprocess_variants, on: [:create, :update], if: -> { image.attached? }
 
+ def scale_ingredients(scale_factor)
+    ingredients.map do |ingredient|
+      {
+        id: ingredient.id,
+        name: ingredient.name,
+        scaled_quantity: (ingredient.quantity || 1) * scale_factor
+      }
+    end
+  end
+
   private
   def preprocess_variants
     {

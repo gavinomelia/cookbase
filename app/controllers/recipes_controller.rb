@@ -47,7 +47,7 @@ class RecipesController < ApplicationController
 
   def scale
     scale_factor = params[:scale_factor].to_f
-    @scaled_ingredients = scaled_ingredients(scale_factor)
+    @scaled_ingredients = @recipe.scale_ingredients(scale_factor)
 
     respond_to do |format|
       format.turbo_stream
@@ -87,16 +87,6 @@ class RecipesController < ApplicationController
 
   def selected_tags
     params[:tags]&.reject(&:blank?)
-  end
-
-  def scaled_ingredients(scale_factor)
-    @recipe.ingredients.map do |ingredient|
-      {
-        id: ingredient.id,
-        name: ingredient.name,
-        scaled_quantity: (ingredient.quantity || 1) * scale_factor
-      }
-    end
   end
 
   private
