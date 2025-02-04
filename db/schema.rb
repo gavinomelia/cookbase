@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_04_165235) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_04_173255) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -69,6 +69,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_04_165235) do
     t.string "url"
     t.text "notes"
     t.jsonb "scraped_data"
+    t.bigint "recipe_book_id"
+    t.index ["recipe_book_id"], name: "index_recipes_on_recipe_book_id"
     t.index ["user_id"], name: "index_recipes_on_user_id"
   end
 
@@ -124,6 +126,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_04_165235) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "ingredients", "recipes"
   add_foreign_key "recipe_books", "users"
+  add_foreign_key "recipes", "recipe_books"
   add_foreign_key "recipes", "users"
   add_foreign_key "taggings", "tags"
 end

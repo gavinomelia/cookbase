@@ -1,0 +1,12 @@
+<h2 class="text-2xl font-bold mb-4">New Recipe Book</h2>
+
+<%= form_with model: @recipe_book, local: true do |f| %>
+  <div class="mb-4">
+    <%= f.label :name, "Recipe Book Name", class: "block text-gray-700 font-medium" %>
+    <%= f.text_field :name, class: "w-full p-2 border border-gray-300 rounded focus:ring focus:ring-cookblue-200 focus:outline-none" %>
+  </div>
+
+  <%= f.submit "Create Recipe Book", class: "bg-cookblue-100 hover:bg-cookblue-200 text-white font-bold py-2 px-4 rounded" %>
+<% end %>
+
+<%= link_to "Cancel", recipes_path, class: "text-gray-600 hover:underline mt-4 inline-block" %>

@@ -1,4 +1,25 @@
+<% if params[:recipe_book_id].present? %>
+  <div class="mb-4">
+    <%= link_to "← Back to All Recipes", recipes_path, class: "text-cookblue-600 hover:text-cookblue-800 font-medium" %>
+  </div>
+<% end %>
+
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+  <!-- Recipe Books Section -->
+  <% unless params[:recipe_book_id].present? %>
+    <% current_user.recipe_books.each do |book| %>
+      <div class="rounded overflow-hidden shadow-lg flex flex-col bg-gray-100 p-4 mb-4 border border-gray-300 hover:shadow-xl transition">
+        <%= link_to recipes_path(recipe_book_id: book.id), data: { turbo_frame: "_top" } do %>
+          <div class="flex items-center justify-center h-32 bg-gray-200 rounded-lg">
+            📖 <span class="text-lg font-semibold text-gray-700"><%= book.name %></span>
+          </div>
+          <p class="text-center text-sm text-gray-600 mt-2"><%= book.recipes.count %> recipes</p>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <!-- Recipes Section -->
   <% @recipes.each do |recipe| %>
     <div class="rounded overflow-hidden shadow-lg flex flex-col mb-4">
       <%= link_to recipe_path(recipe), data: { turbo_frame: "_top" } do %>

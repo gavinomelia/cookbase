@@ -6,7 +6,12 @@ class RecipesController < ApplicationController
   def index
     return redirect_to :login unless logged_in?
 
+  if params[:recipe_book_id].present?
+    @recipes = current_user.recipes.where(recipe_book_id: params[:recipe_book_id])
+  else
     @recipes = current_user.recipes.includes(image_attachment: :blob)
+  end
+
   end
 
   def search
@@ -60,7 +65,7 @@ class RecipesController < ApplicationController
       return
     end
 
-    scraper = RecipeScraper.new(params[:scrape_url], current_user)
+    scraper = RecipeScraper.new(params[:scrape_url], current_user, params[:recipe_book_id])
     if scraper.scrape
       redirect_to scraper.recipe, notice: 'Recipe was successfully scraped and saved.'
     else
@@ -96,7 +101,7 @@ class RecipesController < ApplicationController
   end
 
   def recipe_params
-    params.require(:recipe).permit(:name, :directions, :image, :url, :notes, :tag_list, ingredients_attributes: %i[id name quantity scale _destroy])
+    params.require(:recipe).permit(:name, :directions, :recipe_book_id, :image, :url, :notes, :tag_list, ingredients_attributes: %i[id name quantity scale _destroy])
   end
 
   def require_login

@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # User registration routes
+  resources :recipe_books, only: [:new, :create, :index, :show]
   resources :users, only: [:new, :create]
   resources :password_resets, only: [:create, :new, :edit, :update]
   

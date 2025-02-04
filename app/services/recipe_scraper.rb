@@ -5,9 +5,10 @@ require 'json'
 class RecipeScraper
   attr_reader :recipe, :error
 
-  def initialize(url, user)
+  def initialize(url, user, recipe_book_id = nil)
     @url = url
     @user = user
+    @recipe_book_id = recipe_book_id
   end
 
   def scrape
@@ -70,6 +71,7 @@ class RecipeScraper
       scraped_data: recipe_data,
       name: recipe_attrs[:name],
       directions: recipe_attrs[:directions],
+      recipe_book_id: @recipe_book_id, 
       url: @url
     )
 

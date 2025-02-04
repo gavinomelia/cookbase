@@ -1,6 +1,10 @@
 <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
   <!-- Scrape Recipe Form -->
   <%= form_with(url: scrape_recipes_path, method: :post, local: true) do |form| %>
+    <div class="field">
+      <%= form.label :recipe_book_id, "Recipe Book" %>
+      <%= form.collection_select :recipe_book_id, current_user.recipe_books, :id, :name, include_blank: "None" %>
+    </div>
     <div class="mb-6">
       <%= form.text_field :scrape_url, placeholder: "Enter a recipe URL to scrape", class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" %>
     </div>
@@ -13,7 +17,7 @@
   <!-- Edit Recipe Form -->
   <%= form_with(model: @recipe, local: true) do |form| %>
     <div class="flex justify-center items-center sm:mx-4 md:mx-0 mt-6 mb-4">
-      <label for="dropzone-file" class="relative flex items-center justify-center w-full max-w-md h-64 shadow-md rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 group">    
+      <label for="dropzone-file" class="relative flex items-center justify-center w-full max-w-md h-64 shadow-md rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 group">
         <%= image_tag(recipe_image(recipe), 
           id: "uploaded-image-preview",
           loading: "eager", 
@@ -32,7 +36,7 @@
       <!-- Hidden file input -->
       <%= form.file_field :image, id: 'dropzone-file', accept: 'image/svg+xml, image/png, image/jpg, image/jpeg', class: 'hidden', onchange: 'previewImage(event)' %>
     </div>
-    
+
     <!-- Recipe Name -->
     <div class="mb-6">
       <%= form.label :name, "Recipe Name", class: "block text-gray-800 text-lg font-medium mb-2" %>
@@ -75,6 +79,11 @@
       <%= form.text_area :notes, class: "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none", rows: 4, placeholder: "Add your notes here..." %>
     </div>
 
+    <div class="field">
+      <%= form.label :recipe_book_id, "Recipe Book" %>
+      <%= form.collection_select :recipe_book_id, current_user.recipe_books, :id, :name, include_blank: "None" %>
+    </div>
+
     <!-- Save Button -->
     <div class="text-right">
       <%= form.submit "Save Recipe", class: "bg-cookblue-100 hover:bg-cookblue-200 text-white font-semibold py-3 px-6 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:scale-105" %>
@@ -90,4 +99,3 @@
     <input type="hidden" name="recipe[ingredients_attributes][NEW_RECORD][_destroy]" value="false">
   </div>
 </template>
-
