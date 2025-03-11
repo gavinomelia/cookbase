@@ -1,6 +1,6 @@
 <% if params[:recipe_book_id].present? %>
   <div class="mb-4">
-    <%= link_to "← Back to All Recipes", recipes_path, class: "text-cookblue-600 hover:text-cookblue-800 font-medium" %>
+    <%= link_to "← Back to All Recipes", recipes_path, class: "font-medium" %>
   </div>
 <% end %>
 
@@ -8,12 +8,20 @@
   <!-- Recipe Books Section -->
   <% unless params[:recipe_book_id].present? %>
     <% current_user.recipe_books.each do |book| %>
-      <div class="rounded overflow-hidden shadow-lg flex flex-col bg-gray-100 p-4 mb-4 border border-gray-300 hover:shadow-xl transition">
-        <%= link_to recipes_path(recipe_book_id: book.id), data: { turbo_frame: "_top" } do %>
-          <div class="flex items-center justify-center h-32 bg-gray-200 rounded-lg">
-            📖 <span class="text-lg font-semibold text-gray-700"><%= book.name %></span>
+      <div class="rounded-lg overflow-hidden flex flex-col bg-cookblue-100 p-4 mb-4 border border-gray-300 transition relative hover:shadow-md">
+        <%= link_to recipes_path(recipe_book_id: book.id), data: { turbo_frame: "_top" }, class: "flex flex-col flex-grow" do %>
+          <div class="flex flex-col items-center relative flex-grow">
+            <div class="w-full bg-gray-100 rounded-lg shadow-sm p-3 border border-gray-200 mt-8 relative">
+              <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cookblue-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span class="text-lg font-semibold text-gray-700 text-center"><%= book.name %></span>
+              </div>
+            </div>
+            <div class="flex-grow"></div>
+            <p class="mx-4 mb-2 mt-auto rounded-lg bg-gray-100 w-full justify-end text-center text-sm text-gray-800"><%= book.recipes.count %> <%= 'recipe'.pluralize(book.recipes.count) %></p>
           </div>
-          <p class="text-center text-sm text-gray-600 mt-2"><%= book.recipes.count %> recipes</p>
         <% end %>
       </div>
     <% end %>
@@ -29,4 +37,3 @@
     </div>
   <% end %>
 </div>
-

@@ -9,7 +9,7 @@ class RecipesController < ApplicationController
   if params[:recipe_book_id].present?
     @recipes = current_user.recipes.where(recipe_book_id: params[:recipe_book_id])
   else
-    @recipes = current_user.recipes.includes(image_attachment: :blob)
+    @recipes = current_user.recipes.where(recipe_book_id: nil).includes(image_attachment: :blob)
   end
 
   end
