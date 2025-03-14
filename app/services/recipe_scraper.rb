@@ -34,7 +34,7 @@ class RecipeScraper
     raise URI::InvalidURIError unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
     
     # Add a realistic User-Agent to avoid 403 Forbidden errors
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+    user_agent = browser_user_agent
     
     # Use options hash with headers to set User-Agent
     URI.open(uri, 
@@ -43,20 +43,24 @@ class RecipeScraper
       "Accept-Language" => "en-US,en;q=0.5"
     ).read
   rescue URI::InvalidURIError, Errno::ENOENT => e
-    Rails.logger.error "Invalid URL format: #{e.message}"
+    log_error("Invalid URL format", e)
     @error = "Invalid URL format. Please provide a valid HTTP or HTTPS URL."
     nil
   rescue OpenURI::HTTPError => e
-    Rails.logger.error "Failed to fetch URL: #{e.message}"
+    log_error("Failed to fetch URL", e)
     @error = "Could not fetch the recipe URL."
     nil
+  end
+
+  def browser_user_agent
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
   end
 
   def parse_json_ld(doc)
     json_ld_scripts = doc.css('script[type="application/ld+json"]')
     json_ld_scripts.map { |script| JSON.parse(script.text) }
   rescue JSON::ParserError => e
-    Rails.logger.error "Failed to parse JSON-LD: #{e.message}"
+    log_error("Failed to parse JSON-LD", e)
     []
   end
 
@@ -65,112 +69,77 @@ class RecipeScraper
       recipe_data = extract_recipe_data(content)
       return recipe_data if recipe_data
     end
-    Rails.logger.error "No recipe data found in JSON-LD content"
+    
+    log_error("No recipe data found in JSON-LD content", nil)
     nil
   end
 
   def extract_recipe_data(content)
-    # Debug log to understand content structure
-    Rails.logger.debug "JSON-LD Content type: #{content.class}, keys: #{content.keys}" if content.is_a?(Hash)
+    return nil unless content.is_a?(Hash) || content.is_a?(Array)
     
-    if content.is_a?(Hash) && content["@graph"]
-      # Find any Recipe objects in the graph
-      recipe = content["@graph"].find { |item| 
-        item.is_a?(Hash) && (item["@type"] == "Recipe" || (item["@type"].is_a?(Array) && item["@type"].include?("Recipe")))
-      }
+    # Case 1: Recipe in @graph array
+    if content.is_a?(Hash) && content["@graph"].is_a?(Array)
+      recipe = find_recipe_in_array(content["@graph"])
       return recipe if recipe
     end
 
-    # Direct Recipe object
-    if content.is_a?(Hash) && (content["@type"] == "Recipe" || (content["@type"].is_a?(Array) && content["@type"].include?("Recipe")))
+    # Case 2: Direct Recipe object
+    if content.is_a?(Hash) && is_recipe_object?(content)
       return content
     end
 
-    # Array of items, find Recipe
+    # Case 3: Recipe in array
     if content.is_a?(Array)
-      recipe = content.find { |item| 
-        item.is_a?(Hash) && (item["@type"] == "Recipe" || (item["@type"].is_a?(Array) && item["@type"].include?("Recipe")))
-      }
+      recipe = find_recipe_in_array(content)
       return recipe if recipe
     end
 
     nil
   end
 
-  def process_recipe(recipe_data)
-    begin
-      recipe_attrs = extract_recipe_attributes(recipe_data)
-      normalized_image_url = normalize_image_url(recipe_attrs[:image_url])
-
-      @recipe = @user.recipes.build(
-        scraped_data: recipe_data,
-        name: recipe_attrs[:name],
-        directions: recipe_attrs[:directions],
-        recipe_book_id: @recipe_book_id, 
-        url: @url
-      )
-
-      tempfile = attach_image(normalized_image_url)
-      build_ingredients(recipe_attrs[:ingredients])
-
-      save_recipe(tempfile)
-    rescue => e
-      Rails.logger.error "Error processing recipe: #{e.message}\n#{e.backtrace.join("\n")}"
-      @error = "Failed to process the recipe: #{e.message}"
-      false
+  def is_recipe_object?(item)
+    return false unless item.is_a?(Hash)
+    
+    if item["@type"].is_a?(String)
+      return item["@type"] == "Recipe"
+    elsif item["@type"].is_a?(Array)
+      return item["@type"].include?("Recipe")
     end
+    
+    false
+  end
+
+  def find_recipe_in_array(array)
+    array.find { |item| is_recipe_object?(item) }
+  end
+
+  def process_recipe(recipe_data)
+    recipe_attrs = extract_recipe_attributes(recipe_data)
+    normalized_image_url = normalize_image_url(recipe_attrs[:image_url])
+
+    @recipe = @user.recipes.build(
+      scraped_data: recipe_data,
+      name: recipe_attrs[:name],
+      directions: recipe_attrs[:directions],
+      recipe_book_id: @recipe_book_id, 
+      url: @url
+    )
+
+    tempfile = attach_image(normalized_image_url)
+    build_ingredients(recipe_attrs[:ingredients])
+
+    save_recipe(tempfile)
+  rescue => e
+    log_error("Error processing recipe", e)
+    @error = "Failed to process the recipe: #{e.message}"
+    false
   end
 
   def extract_recipe_attributes(data)
-    Rails.logger.debug "Recipe data keys: #{data.keys}"
-    Rails.logger.debug "Recipe instructions type: #{data["recipeInstructions"].class} #{data["recipeInstructions"].first.class if data["recipeInstructions"].is_a?(Array)}"
+    log_debug("Recipe data keys", data.keys)
     
-    directions = if data["recipeInstructions"].is_a?(Array)
-                  if data["recipeInstructions"].first.is_a?(Hash)
-                    if data["recipeInstructions"].first["@type"] == "HowToStep" || data["recipeInstructions"].first["@type"] == "HowToSection"
-                      if data["recipeInstructions"].first["@type"] == "HowToSection"
-                        # Extract steps from HowToSection objects that have itemListElement arrays
-                        sections_steps = data["recipeInstructions"].flat_map do |section|
-                          if section["itemListElement"].is_a?(Array)
-                            section["itemListElement"].map { |step| step["text"] }
-                          else
-                            []
-                          end
-                        end
-                        sections_steps
-                      else
-                        # Standard HowToStep objects
-                        data["recipeInstructions"].map { |step| step["text"] }
-                      end
-                    elsif data["recipeInstructions"].first.key?("text")
-                      # Extract text from objects with text property
-                      data["recipeInstructions"].map { |step| step["text"] }
-                    else
-                      # Plain array of steps
-                      data["recipeInstructions"]
-                    end
-                  else
-                    # Plain array of strings
-                    data["recipeInstructions"]
-                  end
-                elsif data["recipeInstructions"].is_a?(String)
-                  # Single string - split by periods or newlines for better formatting
-                  data["recipeInstructions"].split(/\.\s+|\n+/).map(&:strip).reject(&:empty?)
-                else
-                  # Anything else, convert to string and put in array
-                  [data["recipeInstructions"].to_s]
-                end
+    directions = extract_directions(data["recipeInstructions"])
     
-    # Ensure directions is always an array, even if empty
-    directions = [] if directions.nil?
-    # Handle nested arrays (flatten to single level)
-    directions = directions.flatten if directions.is_a?(Array) && directions.any? { |d| d.is_a?(Array) }
-    # Remove any nil entries
-    directions = directions.compact if directions.is_a?(Array)
-
-    # Add debug logging
-    Rails.logger.debug "Extracted directions: #{directions.inspect}"
-
     {
       name: data["name"],
       image_url: data["image"],
@@ -179,18 +148,73 @@ class RecipeScraper
     }
   end
 
+  def extract_directions(instructions)
+    return [] if instructions.nil?
+    
+    directions = case instructions
+                 when Array
+                   extract_directions_from_array(instructions)
+                 when String
+                   split_string_into_directions(instructions)
+                 else
+                   [instructions.to_s]
+                 end
+    
+    # Ensure we have a flattened array without nil entries
+    directions = directions.flatten.compact
+    
+    log_debug("Extracted directions", directions)
+    directions
+  end
+
+  def extract_directions_from_array(instructions)
+    return [] if instructions.empty?
+    
+    if instructions.first.is_a?(Hash)
+      extract_directions_from_hash_array(instructions)
+    else
+      # It's an array of strings
+      instructions
+    end
+  end
+
+  def extract_directions_from_hash_array(instructions)
+    # Handle HowToSection objects (contains itemListElement arrays)
+    if instructions.first["@type"] == "HowToSection"
+      instructions.flat_map do |section|
+        if section["itemListElement"].is_a?(Array)
+          section["itemListElement"].map { |step| step["text"] }
+        else
+          []
+        end
+      end
+    # Handle HowToStep objects or objects with text property
+    elsif instructions.first["@type"] == "HowToStep" || instructions.first.key?("text")
+      instructions.map { |step| step["text"] }
+    else
+      # Fallback for any other array structure
+      instructions
+    end
+  end
+
+  def split_string_into_directions(text)
+    text.split(/\.\s+|\n+/).map(&:strip).reject(&:empty?)
+  end
+
   def normalize_image_url(image_url)
     case image_url
     when Array
-      # Handle cases where image is an array of objects with url property
+      # Array of images - take the first one
       if image_url.first.is_a?(Hash) && image_url.first["url"]
         image_url.first["url"]
       else
         image_url.first
       end
     when Hash
+      # Image object with url property
       image_url["url"]
     when String
+      # Direct image URL
       image_url
     else
       nil
@@ -208,11 +232,8 @@ class RecipeScraper
   end
 
   def download_image(image_url)
-    # Also use browser-like headers when downloading images
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
-    
     image_file = URI.parse(image_url).open(
-      "User-Agent" => user_agent,
+      "User-Agent" => browser_user_agent,
       "Accept" => "image/avif,image/webp,*/*"
     )
     extension = File.extname(URI.parse(image_url).path)
@@ -222,11 +243,12 @@ class RecipeScraper
     file.rewind
     file
   rescue OpenURI::HTTPError, URI::InvalidURIError => e
-    Rails.logger.error "Failed to download image: #{e.message}"
+    log_error("Failed to download image", e)
     nil
   end
 
   def build_ingredients(ingredients)
+    return unless ingredients.is_a?(Array)
     ingredients.each { |ingredient| @recipe.ingredients.build(name: ingredient) }
   end
 
@@ -236,8 +258,18 @@ class RecipeScraper
     tempfile&.unlink
     true
   rescue ActiveRecord::RecordInvalid => e
-    Rails.logger.error "Failed to save recipe: #{e.message}"
+    log_error("Failed to save recipe", e)
     @error = "Failed to save the recipe."
     false
+  end
+
+  def log_error(message, error)
+    error_message = error ? "#{message}: #{error.message}" : message
+    Rails.logger.error(error_message)
+    Rails.logger.error(error.backtrace.join("\n")) if error&.backtrace
+  end
+
+  def log_debug(message, data)
+    Rails.logger.debug("#{message}: #{data.inspect}")
   end
 end
