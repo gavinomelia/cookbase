@@ -128,18 +128,48 @@ class RecipeScraper
     directions = if data["recipeInstructions"].is_a?(Array)
                   if data["recipeInstructions"].first.is_a?(Hash)
                     if data["recipeInstructions"].first["@type"] == "HowToStep" || data["recipeInstructions"].first["@type"] == "HowToSection"
-                      data["recipeInstructions"].map { |step| step["text"] }
+                      if data["recipeInstructions"].first["@type"] == "HowToSection"
+                        # Extract steps from HowToSection objects that have itemListElement arrays
+                        sections_steps = data["recipeInstructions"].flat_map do |section|
+                          if section["itemListElement"].is_a?(Array)
+                            section["itemListElement"].map { |step| step["text"] }
+                          else
+                            []
+                          end
+                        end
+                        sections_steps
+                      else
+                        # Standard HowToStep objects
+                        data["recipeInstructions"].map { |step| step["text"] }
+                      end
                     elsif data["recipeInstructions"].first.key?("text")
+                      # Extract text from objects with text property
                       data["recipeInstructions"].map { |step| step["text"] }
                     else
+                      # Plain array of steps
                       data["recipeInstructions"]
                     end
                   else
+                    # Plain array of strings
                     data["recipeInstructions"]
                   end
+                elsif data["recipeInstructions"].is_a?(String)
+                  # Single string - split by periods or newlines for better formatting
+                  data["recipeInstructions"].split(/\.\s+|\n+/).map(&:strip).reject(&:empty?)
                 else
+                  # Anything else, convert to string and put in array
                   [data["recipeInstructions"].to_s]
                 end
+    
+    # Ensure directions is always an array, even if empty
+    directions = [] if directions.nil?
+    # Handle nested arrays (flatten to single level)
+    directions = directions.flatten if directions.is_a?(Array) && directions.any? { |d| d.is_a?(Array) }
+    # Remove any nil entries
+    directions = directions.compact if directions.is_a?(Array)
+
+    # Add debug logging
+    Rails.logger.debug "Extracted directions: #{directions.inspect}"
 
     {
       name: data["name"],
